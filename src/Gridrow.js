@@ -3,9 +3,6 @@ import Gridbutton from './Gridbutton';
 import './grid.css';
 
 class Gridrow extends React.Component {
-  constructor(props) {
-    super(props);
-  }
 
   renderButtons() {
     let array = [];
@@ -15,6 +12,7 @@ class Gridrow extends React.Component {
     return array.map(i => {
       return (
         <Gridbutton
+          key={i}
           addActiveSample={this.props.addActiveSample}
           removeActiveSample={this.props.removeActiveSample}
           beat={i}

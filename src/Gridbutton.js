@@ -8,6 +8,7 @@ class Gridbutton extends React.Component {
       active: false
     };
     this.handleClick = this.handleClick.bind(this);
+    this.generateClassName = this.generateClassName.bind(this);
   }
 
   handleClick() {
@@ -22,13 +23,19 @@ class Gridbutton extends React.Component {
         active: true
       });
     }
-    
+  }
+
+  generateClassName() {
+    let className = "grid-button";
+    className += (this.state.active ? " active-button" : " inactive-button");
+    className += ([1, 5, 9, 13].includes(this.props.beat) ? " downbeat" : "");
+    return className;
   }
 
   render() {
     return (
       <Fragment>
-        <button onClick={this.handleClick} className={this.state.active ? `grid-button active-button ${this.props.highlight}` : "grid-button inactive-button"}/>
+        <button onClick={this.handleClick} className={this.generateClassName()}/>
       </Fragment>
     )
   }

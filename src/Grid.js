@@ -11,10 +11,11 @@ class Grid extends React.Component {
   }
 
   renderRows() {
-    let samples = ["Kick", "Snare", "Hihat (c)", "HiHat (o)", "Cymbal"];
+    let samples = ["Kick", "Snare", "HiHat (c)", "HiHat (o)", "Cymbal"];
     return samples.map(i => {
       return (
         <Gridrow
+          key={i}
           playing={this.props.playing}
           addActiveSample={this.props.addActiveSample}
           removeActiveSample={this.props.removeActiveSample}
@@ -33,7 +34,7 @@ class Grid extends React.Component {
       array.push(i);
     }
     return array.map(number => {
-      return <h5 className={this.props.currentBeat === number ? "selected-beat" : ""}>{number}</h5>
+      return <h5 key={number} className={this.props.currentBeat === number ? "selected-beat" : ""}>{number}</h5>
     })
   }
 
