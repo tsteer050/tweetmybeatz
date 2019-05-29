@@ -8,18 +8,32 @@ import hihatO from './resources/samples/hihat-o.mp3';
 import cymbal from './resources/samples/cymbal.mp3';
 import airhorn from './resources/samples/airhorn.mp3';
 import './sequencer.css';
+import FileSaver from 'file-saver';
 
 const samples = [
   "Kick",
   "Snare",
   "Hihat (c)", 
   "HiHat (o)",
-  "Cymbal"
+  "Cymbal",
+  "Airhorn"
 ];
+
+const linkedSamples = {
+  "Kick": kick,
+  "Snare": snare,
+  "Hihat (c)": hihatC,
+  "HiHat (o)": hihatO,
+  "Cymbal": cymbal,
+  "Airhorn": airhorn
+};
 
 class Sequencer extends React.Component {
   constructor(props) {
     super(props);
+
+    this.chunks = [];
+    
     this.state = {
       playing: false,
       tempo: 80,
@@ -46,12 +60,12 @@ class Sequencer extends React.Component {
 
       },
       samples: {
-        "Kick": new Audio(kick),
-        "Snare": new Audio(snare),
-        "Hihat (c)": new Audio(hihatC),
-        "HiHat (o)": new Audio(hihatO),
-        "Cymbal": new Audio(cymbal),
-        "Airhorn": new Audio(airhorn)
+        // "Kick": new Audio(kick),
+        // "Snare": new Audio(snare),
+        // "Hihat (c)": new Audio(hihatC),
+        // "HiHat (o)": new Audio(hihatO),
+        // "Cymbal": new Audio(cymbal),
+        // "Airhorn": new Audio(airhorn)
       }
     };
     this.setTempo = this.setTempo.bind(this);
@@ -62,6 +76,93 @@ class Sequencer extends React.Component {
     this.play = this.play.bind(this);
     this.setVolume = this.setVolume.bind(this);
     this.airhorn = this.airhorn.bind(this);
+  }
+
+  componentWillMount() {
+    try {
+      // Fix up for prefixing
+      window.AudioContext = window.AudioContext || window.webkitAudioContext;
+      this.audioContext = new AudioContext();
+    }
+    catch (e) {
+      alert('Web Audio API is not supported in this browser');
+    }
+  }
+
+  componentDidMount() {
+    this.gainNode = this.audioContext.createGain();
+    this.audioDestination = this.audioContext.createMediaStreamDestination();
+    this.gainNode.connect(this.audioDestination);
+    this.mediaRecorder = new MediaRecorder(this.audioDestination.stream);
+    samples.forEach(key => {
+      const sample = linkedSamples[key];
+      const sampleAudio = new Audio(sample);
+      const track = this.audioContext.createMediaElementSource(sampleAudio);
+      track.connect(this.gainNode).connect(this.audioContext.destination);
+      
+      this.state.samples[key] = sampleAudio;
+    });
+    this.mediaRecorder.ondataavailable = (e) => {
+      this.chunks.push(e.data);
+      console.log('data');
+      debugger
+    };
+
+
+
+    this.mediaRecorder.onstop = function (e) {
+      console.log("data available after MediaRecorder.stop() called.");
+ 
+
+      // var clipName = prompt('Enter a name for your sound clip');
+
+      // var clipContainer = document.createElement('article');
+      // var clipLabel = document.createElement('p');
+      // var audio = document.createElement('audio');
+      // var deleteButton = document.createElement('button');
+
+      // clipContainer.classList.add('clip');
+      // audio.setAttribute('controls', '');
+      // deleteButton.innerHTML = "Delete";
+      // clipLabel.innerHTML = clipName;
+
+      // clipContainer.appendChild(audio);
+      // clipContainer.appendChild(clipLabel);
+      // clipContainer.appendChild(deleteButton);
+      // soundClips.appendChild(clipContainer);
+
+      let audio = new Audio();
+      audio.controls = true;
+      console.log(this.chunks);
+      var blob = new Blob(this.chunks, { type: 'audio/webm;codecs=opus' });
+      this.chunks = [];
+      var audioURL = URL.createObjectURL(blob);
+      audio.src = audioURL;
+      // send audio to be converted
+      console.log("recorder stopped, attempting to convert");
+
+      var ffmpeg = require('ffmpeg');
+      try {
+        var process = new ffmpeg(blob);
+        var processed;
+        process.then(audio => {
+          audio.fnExtractSoundToMP3(processed, function (error, file) {
+            if (!error) console.log('Audio file: ' + file);
+          });
+        }, err => {
+          console.log('Error: ' + err);
+        });
+        FileSaver.saveAs(processed, "newbeat.mp3");
+
+      }
+      catch (e) {
+        console.log(e.code);
+        console.log(e.msg);
+      }
+
+      
+    };
+    
   }
 
   componentDidUpdate() {
@@ -166,7 +267,8 @@ class Sequencer extends React.Component {
     this.setState({
       volume: newVolume
     });
-    samples.forEach(sample => this.state.samples[sample].volume = newVolume / 100);
+    this.gainNode.gain.value = newVolume / 100;
+    // samples.forEach(sample => this.state.samples[sample].volume = newVolume / 100);
   }
 
   airhorn() {
@@ -187,6 +289,7 @@ class Sequencer extends React.Component {
             volume={this.state.volume}
             setVolume={this.setVolume}
             airhorn={this.airhorn}
+            mediaRecorder={this.mediaRecorder}
           />
           <h1 className="app-title">cool beats bro</h1>
 

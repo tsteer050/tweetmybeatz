@@ -1,17 +1,25 @@
 import React from 'react';
 import './transport.css';
 
+
 class Transport extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       tempo: this.props.tempo,
       volume: this.props.volume,
-      oldVolume: 0
+      oldVolume: 0,
+      recording: false
     };
+
     this.handleKeyPress = this.handleKeyPress.bind(this);
     this.mute = this.mute.bind(this);
+    this.record = this.record.bind(this);
   }
+
+  componentDidMount() {
+    
+}
 
   updateTempo(e) {
     this.setState({
@@ -48,6 +56,24 @@ class Transport extends React.Component {
     }
   }
 
+  record() {
+    if (!this.state.recording) {
+      this.props.mediaRecorder.start();
+      console.log(this.props.mediaRecorder.state);
+      console.log("recorder started");
+      this.setState({
+        recording: true
+      });
+    } else {
+      this.props.mediaRecorder.stop();
+      console.log(this.props.mediaRecorder.state);
+      console.log("recorder stopped");
+      this.setState({
+        recording: false
+      });
+    }
+  }
+
   render() {
     let playPause = () => {
       if (this.props.playing) {
@@ -65,21 +91,7 @@ class Transport extends React.Component {
             alt="Play" />
         )
       }
-
-
-
-    // return (
-    //   <img 
-    //     className="transport-button"
-    //     onClick={this.props.togglePlay} 
-    //     src={this.props.playing ? require('./resources/pause.png') : require('./resources/play.png')} 
-    //     alt={this.props.playing ? "Pause" : "Play"} 
-    //     />
-    // )
   };
-
-  
-   
 
     return (
       <div className="transport">
@@ -98,6 +110,7 @@ class Transport extends React.Component {
             onClick={this.props.stopPlay}
             alt="Stop"
           />
+          <button onClick={this.record}>Record</button>
           <i className="fas fa-bullhorn transport-button" onClick={this.props.airhorn}/>
         </div>
       </div>
