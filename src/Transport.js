@@ -1,17 +1,27 @@
 import React from 'react';
 import './transport.css';
 
+
 class Transport extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       tempo: this.props.tempo,
       volume: this.props.volume,
-      oldVolume: 0
+      oldVolume: 0,
+      recording: false,
+      micActive: false
     };
+
     this.handleKeyPress = this.handleKeyPress.bind(this);
     this.mute = this.mute.bind(this);
+    this.record = this.record.bind(this);
+    this.toggleMic = this.toggleMic.bind(this);
   }
+
+  componentDidMount() {
+    
+}
 
   updateTempo(e) {
     this.setState({
@@ -48,6 +58,31 @@ class Transport extends React.Component {
     }
   }
 
+  record() {
+    if (!this.state.recording) {
+      this.props.recorder.startRecording();
+      if (!this.props.playing) this.props.togglePlay();
+      console.log("recorder started");
+      this.setState({
+        recording: true
+      });
+    } else {
+      this.props.recorder.finishRecording();
+      console.log("recorder stopped");
+      this.setState({
+        recording: false
+      });
+      this.props.togglePlay();
+    }
+  }
+
+  toggleMic() {
+    this.props.toggleMic();
+    this.setState({
+      micActive: !this.state.micActive
+    });
+  }
+
   render() {
     let playPause = () => {
       if (this.props.playing) {
@@ -65,21 +100,7 @@ class Transport extends React.Component {
             alt="Play" />
         )
       }
-
-
-
-    // return (
-    //   <img 
-    //     className="transport-button"
-    //     onClick={this.props.togglePlay} 
-    //     src={this.props.playing ? require('./resources/pause.png') : require('./resources/play.png')} 
-    //     alt={this.props.playing ? "Pause" : "Play"} 
-    //     />
-    // )
   };
-
-  
-   
 
     return (
       <div className="transport">
@@ -90,6 +111,15 @@ class Transport extends React.Component {
         <div className="tempo-controls">
           <h5>BPM:</h5>
           <input className="tempo-input" type="number" value={this.state.tempo} onChange={(e) => this.updateTempo(e)} onKeyDown={(e) => this.handleKeyPress(e)} />
+          <div>
+            <select className="kit-select" onChange={(e) => this.props.changeKit(e.target.value)}>
+              <option value="Default">Default</option>
+              <option value="Boutique">Boutique</option>
+              <option value="Electro">Electro</option>
+              <option value="Heavy">Heavy</option>
+              <option value="Street">Street</option>
+            </select>
+          </div>
         </div>
         <div className="transport-buttons">
           {playPause()}
@@ -98,6 +128,8 @@ class Transport extends React.Component {
             onClick={this.props.stopPlay}
             alt="Stop"
           />
+          <i className={this.state.recording ? "fas fa-circle transport-button state-active" : "fas fa-circle transport-button"} onClick={this.record} />
+          <i className={this.state.micActive ? "fas fa-microphone-alt transport-button state-active" : "fas fa-microphone-alt transport-button"} onClick={this.toggleMic}/>
           <i className="fas fa-bullhorn transport-button" onClick={this.props.airhorn}/>
         </div>
       </div>

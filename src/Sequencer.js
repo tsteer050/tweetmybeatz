@@ -1,18 +1,30 @@
 import React from 'react';
 import Grid from './Grid';
 import Transport from './Transport';
-import kick from './resources/samples/kick.mp3';
-import snare from './resources/samples/snare.mp3';
-import hihatC from './resources/samples/hihat-c.mp3';
-import hihatO from './resources/samples/hihat-o.mp3';
-import cymbal from './resources/samples/cymbal.mp3';
-import airhorn from './resources/samples/airhorn.mp3';
+
+import defaultSamples from './resources/samples/DefaultSamples';
+import boutiqueSamples from './resources/samples/Boutique 78/BoutiqueSamples';
+import electroSamples from './resources/samples/Electro/ElectroSamples';
+import heavySamples from './resources/samples/Heavy/HeavySamples';
+import streetSamples from './resources/samples/Street/StreetSamples';
+
 import './sequencer.css';
+import FileSaver from 'file-saver';
+const WebAudioRecorder = window.WebAudioRecorder;
+
+
+const kits = {
+  "Default": defaultSamples,
+  "Boutique": boutiqueSamples,
+  "Electro": electroSamples,
+  "Heavy": heavySamples,
+  "Street": streetSamples
+};
 
 const samples = [
   "Kick",
   "Snare",
-  "Hihat (c)", 
+  "HiHat (c)", 
   "HiHat (o)",
   "Cymbal"
 ];
@@ -20,6 +32,9 @@ const samples = [
 class Sequencer extends React.Component {
   constructor(props) {
     super(props);
+
+    this.chunks = [];
+    
     this.state = {
       playing: false,
       tempo: 80,
@@ -45,14 +60,7 @@ class Sequencer extends React.Component {
         16: []
 
       },
-      samples: {
-        "Kick": new Audio(kick),
-        "Snare": new Audio(snare),
-        "Hihat (c)": new Audio(hihatC),
-        "HiHat (o)": new Audio(hihatO),
-        "Cymbal": new Audio(cymbal),
-        "Airhorn": new Audio(airhorn)
-      }
+      samples: {}
     };
     this.setTempo = this.setTempo.bind(this);
     this.togglePlay = this.togglePlay.bind(this);
@@ -62,10 +70,70 @@ class Sequencer extends React.Component {
     this.play = this.play.bind(this);
     this.setVolume = this.setVolume.bind(this);
     this.airhorn = this.airhorn.bind(this);
+    this.toggleMic = this.toggleMic.bind(this);
+    this.changeKit = this.changeKit.bind(this);
+  }
+
+ 
+  componentDidMount() {
+
+    try {
+      // Fix up for prefixing
+      window.AudioContext = window.AudioContext || window.webkitAudioContext;
+      this.audioContext = new AudioContext();
+      
+    }
+    catch (e) {
+      alert('Web Audio API is not supported in this browser');
+    }
+
+    this.gainNode = this.audioContext.createGain();
+    this.audioDestination = this.audioContext.createMediaStreamDestination();
+    this.gainNode.connect(this.audioDestination);
+    this.gainNode.connect(this.audioContext.destination);
+    // this.mediaRecorder = new MediaRecorder(this.audioDestination.stream);
+    samples.forEach(key => {
+      const sample = defaultSamples[key];
+      const sampleAudio = new Audio(sample);
+      const track = this.audioContext.createMediaElementSource(sampleAudio);
+      track.connect(this.gainNode);
+      
+      this.state.samples[key] = sampleAudio;
+    });
+    const sample = defaultSamples["Airhorn"];
+    const sampleAudio = new Audio(sample);
+    const track = this.audioContext.createMediaElementSource(sampleAudio);
+    track.connect(this.gainNode);
+
+    this.state.samples["Airhorn"] = sampleAudio;
+    
+
+    navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
+        this.microphone = this.audioContext.createMediaStreamSource(stream);
+        this.micGainNode = this.audioContext.createGain();
+        this.micGainNode.connect(this.gainNode);
+        this.microphone.connect(this.micGainNode);
+        this.micGainNode.gain.value = 0;
+      });
+
+
+    
+    this.recorder = new WebAudioRecorder(this.gainNode, {
+      workerDir: "./javascripts/"     // must end with slash
+    });
+    this.recorder.setEncoding("mp3");
+
+    this.recorder.onComplete = (recorder, blob) => {
+      FileSaver.saveAs(blob, "newbeat.mp3");
+    };
   }
 
   componentDidUpdate() {
     this.play();
+  }
+
+  toggleMic() {
+    this.micGainNode.gain.value === 0 ? this.micGainNode.gain.value = 1 : this.micGainNode.gain.value = 0;
   }
 
   addActiveSample(sample, beat) {
@@ -85,6 +153,12 @@ class Sequencer extends React.Component {
     }
     this.setState({
       activeSamples: newActiveSamples
+    });
+  }
+
+  changeKit(kit) {
+    samples.forEach(key => {
+      this.state.samples[key].src = kits[kit][key];
     });
   }
 
@@ -166,7 +240,8 @@ class Sequencer extends React.Component {
     this.setState({
       volume: newVolume
     });
-    samples.forEach(sample => this.state.samples[sample].volume = newVolume / 100);
+    this.gainNode.gain.value = newVolume / 100;
+    // samples.forEach(sample => this.state.samples[sample].volume = newVolume / 100);
   }
 
   airhorn() {
@@ -187,9 +262,11 @@ class Sequencer extends React.Component {
             volume={this.state.volume}
             setVolume={this.setVolume}
             airhorn={this.airhorn}
+            recorder={this.recorder}
+            toggleMic={this.toggleMic}
+            changeKit={this.changeKit}
           />
           <h1 className="app-title">cool beats bro</h1>
-
         </div>
         <Grid 
         playing={this.state.playing}

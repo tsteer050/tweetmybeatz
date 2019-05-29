@@ -44,6 +44,14 @@
   transition: border .2s;
 }
 
+.downbeat {
+      background-image:
+  radial-gradient(
+    #1f1d1d,
+    #161616
+  );
+}
+
 .active-button {
 
   border-color: #c141f3;
