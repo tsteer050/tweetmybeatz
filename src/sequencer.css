@@ -1,0 +1,24 @@
+.sequencer {
+  background-image:
+    radial-gradient(
+      #333232,
+      #0c0b0b
+    );
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  width: 825px;
+  height: 500px;
+}
+
+.app-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 60px;
+  color: rgb(196, 46, 255);
+  text-shadow: 0 0 10px rgb(196, 46, 255);;
+  margin-left: 40px;
+}
+
+.sequencer-top {
+  display: flex;
+}

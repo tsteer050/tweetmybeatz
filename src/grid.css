@@ -1,0 +1,113 @@
+.grid {
+  margin-right: 80px;
+}
+
+.grid-row {
+  display: flex;
+  margin-left: 50px;
+  background-image: linear-gradient(transparent, rgba(0,0,0,0.6));
+  border: 1px solid rgb(51, 49, 49);
+  height: 41px;
+  align-items: center;
+}
+
+.grid-row-sample-button {
+  width: 60px;
+  margin-right: 10px;
+  margin-left: 8px;
+  background-image:
+    radial-gradient(
+      #2c2a2a,
+      #252424
+    );
+  border: 2px solid #302f2e;
+  border-radius: 2px;
+  border-style: outset;
+  color: rgb(196, 46, 255);
+  text-shadow: 0 0 10px rgb(196, 46, 255);;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-size: 13px;
+}
+
+.grid-button {
+  width: 35px;
+  height: 35px;
+  margin-right: 1px;
+    background-image:
+  radial-gradient(
+    #2c2a2a,
+    #252424
+  );
+  border: 2px solid #302f2e;
+  border-radius: 4px;
+  border-style: outset;
+  transition: border .2s;
+}
+
+.active-button {
+
+  border-color: #c141f3;
+  background-image:
+  radial-gradient(
+    rgb(196, 46, 255),
+    #9527b1
+  );
+}
+
+.grid-button:hover {
+  cursor: pointer;
+  border: 2px solid #c918ff;
+}
+
+.row-bottom-markers {
+  display: flex;
+  margin-left: 143px;
+}
+
+.row-bottom-markers h5 {
+  width: 35px;
+  margin-right: 1px;
+  text-align: center;
+  color: #9e60db;
+}
+
+.selected-beat {
+  color: white!important;
+}
+
+.highlight-grid-button.active-button {
+  background-image:
+    radial-gradient(
+      rgb(220, 149, 248),
+      #9527b1
+    );
+}
+
+.tempo-input {
+  width: 34px;
+  height: 20px;
+  background-color: #050505;
+  color: rgb(196, 46, 255);
+  text-shadow: 0 0 10px rgb(196, 46, 255);;
+  border: 1px solid black;
+  border-radius: 5px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-size: 15px;
+  font-weight: bolder;
+  text-align: center;
+}
+
+.meter {
+  width: 5px;
+  margin-right: 10px;
+  background-color: #141414;
+  height: 30px;
+  transform-origin: bottom;
+  transition: background-color linear .3s, box-shadow linear .3s;
+}
+
+.meter-active {
+  background-color: #c918ff;
+  box-shadow: 0 0 10px rgb(196, 46, 255);;
+  background-position: 0 100%;
+}
