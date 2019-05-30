@@ -88,7 +88,7 @@
     radial-gradient(
       rgb(220, 149, 248),
       #9527b1
-    );
+    )!important;
 }
 
 .tempo-input {

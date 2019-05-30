@@ -29,6 +29,7 @@ class Gridbutton extends React.Component {
     let className = "grid-button";
     className += (this.state.active ? " active-button" : " inactive-button");
     className += ([1, 5, 9, 13].includes(this.props.beat) ? " downbeat" : "");
+    className += " " + this.props.highlight;
     return className;
   }
 
