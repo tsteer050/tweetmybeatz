@@ -1,5 +1,7 @@
 import React from 'react';
 import './transport.css';
+import GiphySearchModal from './GiphySearchModal';
+
 
 
 class Transport extends React.Component {
@@ -83,6 +85,11 @@ class Transport extends React.Component {
     });
   }
 
+  toggleModal() {
+    let modal = document.getElementById("giphy-search-modal-view");
+    modal.classList.toggle("visible");
+  }
+
   render() {
     let playPause = () => {
       if (this.props.playing) {
@@ -131,6 +138,8 @@ class Transport extends React.Component {
           <i className={this.state.recording ? "fas fa-circle transport-button state-active" : "fas fa-circle transport-button"} onClick={this.record} />
           <i className={this.state.micActive ? "fas fa-microphone-alt transport-button state-active" : "fas fa-microphone-alt transport-button"} onClick={this.toggleMic}/>
           <i className="fas fa-bullhorn transport-button" onClick={this.props.airhorn}/>
+          <i className="fas fa-video transport-button" onClick={this.toggleModal}/>
+          <GiphySearchModal className="giphy-search-modal" toggleModal={this.toggleModal} setGif={this.props.setGif}/>
         </div>
       </div>
     )
