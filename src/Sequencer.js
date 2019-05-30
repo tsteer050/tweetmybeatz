@@ -2,6 +2,7 @@ import React from 'react';
 import Grid from './Grid';
 import Transport from './Transport';
 
+
 import defaultSamples from './resources/samples/DefaultSamples';
 import boutiqueSamples from './resources/samples/Boutique 78/BoutiqueSamples';
 import electroSamples from './resources/samples/Electro/ElectroSamples';
@@ -10,6 +11,9 @@ import streetSamples from './resources/samples/Street/StreetSamples';
 
 import './sequencer.css';
 import FileSaver from 'file-saver';
+
+
+
 const WebAudioRecorder = window.WebAudioRecorder;
 
 
@@ -41,6 +45,7 @@ class Sequencer extends React.Component {
       currentBeat: 1,
       timerInProgress: false,
       volume: 100,
+      gif: null,
       activeSamples: {
         1: [],
         2: [],
@@ -72,6 +77,8 @@ class Sequencer extends React.Component {
     this.airhorn = this.airhorn.bind(this);
     this.toggleMic = this.toggleMic.bind(this);
     this.changeKit = this.changeKit.bind(this);
+    this.setGif = this.setGif.bind(this);
+    this.temp = this.temp.bind(this);
   }
 
  
@@ -130,6 +137,12 @@ class Sequencer extends React.Component {
 
   componentDidUpdate() {
     this.play();
+  }
+
+  setGif(gif) {
+    this.setState({
+      gif
+    });
   }
 
   toggleMic() {
@@ -249,6 +262,16 @@ class Sequencer extends React.Component {
     this.state.samples["Airhorn"].play();
   }
 
+  temp() {
+    if (this.state.gif) {
+      return (
+      <video width="100" height="100" autoPlay>
+        <source src={this.state.gif} type="video/mp4" />
+      </video>
+      )
+    }      
+  }
+        
   render() {
     return (
       <div className="sequencer">
@@ -265,8 +288,10 @@ class Sequencer extends React.Component {
             recorder={this.recorder}
             toggleMic={this.toggleMic}
             changeKit={this.changeKit}
+            setGif={this.setGif}
           />
           <h1 className="app-title">cool beats bro</h1>
+          {this.temp()}
         </div>
         <Grid 
         playing={this.state.playing}
