@@ -3,9 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "axios": "^0.19.0",
+    "concurrently": "^4.1.0",
+    "express": "^4.17.1",
     "ffmpeg": "0.0.4",
     "file-saver": "^2.0.2",
     "giphy-js-sdk-core": "^1.0.6",
+    "node-url-downloader": "^0.1.9",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-scripts": "3.0.1"
@@ -14,8 +18,11 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "server": "node index.js",
+    "dev": "concurrently \"npm run server\" \"npm run start\""
   },
+  "proxy": "http://localhost:5000",
   "eslintConfig": {
     "extends": "react-app"
   },

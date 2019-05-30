@@ -1,5 +1,6 @@
 import React from 'react';
 import './giphysearchmodal.css';
+import Axios from 'axios';
 const GphApiClient = require('giphy-js-sdk-core');
 const client = GphApiClient("270ZtAJzJVTLdVI0kokYOtcmulH62RHj");
 
@@ -40,8 +41,17 @@ class GiphySearchModal extends React.Component {
       });
   }
 
-  handleClick(gif) {
-    this.props.setGif(gif);
+  handleClick(url) {
+    Axios.get(`/gif/?url=${url}`)
+      .then(function (response) {
+        debugger
+        console.log(response);
+      })
+      .catch(function (error) {
+        // handle error
+        console.log(error);
+      })
+    this.props.setGif(url);
     this.props.toggleModal();
   }
 

@@ -78,7 +78,7 @@ class Sequencer extends React.Component {
     this.toggleMic = this.toggleMic.bind(this);
     this.changeKit = this.changeKit.bind(this);
     this.setGif = this.setGif.bind(this);
-    this.temp = this.temp.bind(this);
+    this.renderGif = this.renderGif.bind(this);
   }
 
  
@@ -141,7 +141,7 @@ class Sequencer extends React.Component {
 
   setGif(gif) {
     this.setState({
-      gif
+      gif: gif
     });
   }
 
@@ -262,7 +262,7 @@ class Sequencer extends React.Component {
     this.state.samples["Airhorn"].play();
   }
 
-  temp() {
+  renderGif() {
     if (this.state.gif) {
       return (
       <video width="100" height="100" autoPlay>
@@ -291,7 +291,7 @@ class Sequencer extends React.Component {
             setGif={this.setGif}
           />
           <h1 className="app-title">cool beats bro</h1>
-          {this.temp()}
+          {this.renderGif()}
         </div>
         <Grid 
         playing={this.state.playing}
