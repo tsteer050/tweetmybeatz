@@ -19,6 +19,7 @@ class Transport extends React.Component {
     this.mute = this.mute.bind(this);
     this.record = this.record.bind(this);
     this.toggleMic = this.toggleMic.bind(this);
+    this.renderRecordButton = this.renderRecordButton.bind(this);
   }
 
   componentDidMount() {
@@ -62,14 +63,14 @@ class Transport extends React.Component {
 
   record() {
     if (!this.state.recording) {
-      this.props.recorder.startRecording();
+      this.props.recorder.start();
       if (!this.props.playing) this.props.togglePlay();
       console.log("recorder started");
       this.setState({
         recording: true
       });
     } else {
-      this.props.recorder.finishRecording();
+      this.props.recorder.stop();
       console.log("recorder stopped");
       this.setState({
         recording: false
@@ -88,6 +89,19 @@ class Transport extends React.Component {
   toggleModal() {
     let modal = document.getElementById("giphy-search-modal-view");
     modal.classList.toggle("visible");
+  }
+
+
+  renderRecordButton() {
+    if (!this.props.recordPossible) {
+      return (
+        <i className="fas fa-circle transport-button inactive-button" />
+      )
+    } else {
+      return (
+        <i className={this.state.recording ? "fas fa-stop-circle transport-button state-active" : "fas fa-circle transport-button"} onClick={this.record} />
+      )
+    }
   }
 
   render() {
@@ -135,7 +149,7 @@ class Transport extends React.Component {
             onClick={this.props.stopPlay}
             alt="Stop"
           />
-          <i className={this.state.recording ? "fas fa-circle transport-button state-active" : "fas fa-circle transport-button"} onClick={this.record} />
+          {this.renderRecordButton()}
           <i className={this.state.micActive ? "fas fa-microphone-alt transport-button state-active" : "fas fa-microphone-alt transport-button"} onClick={this.toggleMic}/>
           <i className="fas fa-bullhorn transport-button" onClick={this.props.airhorn}/>
           <i className="fas fa-video transport-button" onClick={this.toggleModal}/>

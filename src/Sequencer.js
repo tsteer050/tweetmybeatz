@@ -10,11 +10,6 @@ import heavySamples from './resources/samples/Heavy/HeavySamples';
 import streetSamples from './resources/samples/Street/StreetSamples';
 
 import './sequencer.css';
-import FileSaver from 'file-saver';
-
-
-
-const WebAudioRecorder = window.WebAudioRecorder;
 
 
 const kits = {
@@ -38,6 +33,7 @@ class Sequencer extends React.Component {
     super(props);
 
     this.chunks = [];
+    this.listener = false;
     
     this.state = {
       playing: false,
@@ -46,6 +42,8 @@ class Sequencer extends React.Component {
       timerInProgress: false,
       volume: 100,
       gif: null,
+      recorder: null,
+      recordPossible: false,
       activeSamples: {
         1: [],
         2: [],
@@ -79,6 +77,7 @@ class Sequencer extends React.Component {
     this.changeKit = this.changeKit.bind(this);
     this.setGif = this.setGif.bind(this);
     this.renderGif = this.renderGif.bind(this);
+    this.configureRecorder = this.configureRecorder.bind(this);
   }
 
  
@@ -105,14 +104,22 @@ class Sequencer extends React.Component {
       const track = this.audioContext.createMediaElementSource(sampleAudio);
       track.connect(this.gainNode);
       
-      this.state.samples[key] = sampleAudio;
+      let newSamples = this.state.samples;
+      newSamples[key] = sampleAudio;
+      this.setState({
+        samples: newSamples
+      });
     });
     const sample = defaultSamples["Airhorn"];
     const sampleAudio = new Audio(sample);
     const track = this.audioContext.createMediaElementSource(sampleAudio);
     track.connect(this.gainNode);
 
-    this.state.samples["Airhorn"] = sampleAudio;
+    let newSamples = this.state.samples;
+    newSamples["Airhorn"] = sampleAudio;
+    this.setState({
+      samples: newSamples
+    });
     
 
     navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
@@ -122,27 +129,54 @@ class Sequencer extends React.Component {
         this.microphone.connect(this.micGainNode);
         this.micGainNode.gain.value = 0;
       });
-
-
-    
-    this.recorder = new WebAudioRecorder(this.gainNode, {
-      workerDir: "./javascripts/"     // must end with slash
-    });
-    this.recorder.setEncoding("mp3");
-
-    this.recorder.onComplete = (recorder, blob) => {
-      FileSaver.saveAs(blob, "newbeat.mp3");
-    };
   }
 
   componentDidUpdate() {
     this.play();
+
+  }
+
+  configureRecorder() {
+
+    debugger
+    let video = document.getElementById("video");
+    let videoTrack = video.captureStream().getVideoTracks()[0];
+
+    let audioTrack = this.audioDestination.stream.getAudioTracks()[0];
+
+    let combined = new MediaStream([videoTrack, audioTrack]);
+    let recorder = new MediaRecorder(combined);
+
+    recorder.ondataavailable = (e) => {
+      this.chunks.push(e.data);
+    };
+
+    this.setState({
+      recorder: recorder
+    });
   }
 
   setGif(gif) {
     this.setState({
-      gif: gif
+      gif: gif,
+      recordPossible: false
+    }, () => {
+      let video = document.getElementById("video");
+      if (this.listener) {
+        video.removeEventListener('loadeddata', this.listener);
+      }
+      this.listener = () => {
+        if (video.readyState >= 2) {
+          if (!this.state.recorder) this.configureRecorder();
+          this.setState({
+            recordPossible: true
+          });
+        }
+      };
+      video.addEventListener('loadeddata', this.listener);
+      video.load();
     });
+
   }
 
   toggleMic() {
@@ -170,8 +204,12 @@ class Sequencer extends React.Component {
   }
 
   changeKit(kit) {
+    let newSamples = this.state.samples;
     samples.forEach(key => {
-      this.state.samples[key].src = kits[kit][key];
+      newSamples[key].src = kits[kit][key];
+    });
+    this.setState({
+      samples: newSamples
     });
   }
 
@@ -207,7 +245,11 @@ class Sequencer extends React.Component {
   }
   
   playSample(sample) {
-    this.state.samples[sample].currentTime = 0;
+    let resetSample = this.state.samples;
+    resetSample[sample].currentTime = 0;
+    this.setState({
+      samples: resetSample
+    });
     this.state.samples[sample].play();
   }
 
@@ -254,22 +296,25 @@ class Sequencer extends React.Component {
       volume: newVolume
     });
     this.gainNode.gain.value = newVolume / 100;
-    // samples.forEach(sample => this.state.samples[sample].volume = newVolume / 100);
   }
 
   airhorn() {
-    this.state.samples["Airhorn"].currentTime = 0;
+    let resetSample = this.state.samples;
+    resetSample["Airhorn"].currentTime = 0;
+    this.setState({
+      samples: resetSample
+    });
     this.state.samples["Airhorn"].play();
   }
 
   renderGif() {
-    if (this.state.gif) {
+
       return (
-      <video width="100" height="100" autoPlay>
-        <source src={this.state.gif} type="video/mp4" />
+      <video id="video" width="100" height="100" autoPlay >
+        <source src={this.state.gif ? this.state.gif : ""} type="video/mp4" />
       </video>
       )
-    }      
+
   }
         
   render() {
@@ -285,10 +330,12 @@ class Sequencer extends React.Component {
             volume={this.state.volume}
             setVolume={this.setVolume}
             airhorn={this.airhorn}
-            recorder={this.recorder}
+            recorder={this.state.recorder}
             toggleMic={this.toggleMic}
             changeKit={this.changeKit}
             setGif={this.setGif}
+            configureRecorder={this.configureRecorder}
+            recordPossible={this.state.recordPossible}
           />
           <h1 className="app-title">cool beats bro</h1>
           {this.renderGif()}

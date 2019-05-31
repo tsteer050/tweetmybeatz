@@ -15,6 +15,7 @@ class GiphySearchModal extends React.Component {
     };
     this.mapSearchResults = this.mapSearchResults.bind(this);
     this.search = this.search.bind(this);
+    this.handleClick = this.handleClick.bind(this);
   }
 
 
@@ -28,6 +29,7 @@ class GiphySearchModal extends React.Component {
     e.preventDefault();
     client.search('gifs', { "q": this.state.search })
       .then((response) => {
+        
         response.data.forEach((gifObject) => {
           let oldResults = this.state.results;
           oldResults.push(gifObject);
@@ -42,22 +44,22 @@ class GiphySearchModal extends React.Component {
   }
 
   handleClick(url) {
+    let set = this.props.setGif;
     Axios.get(`/gif/?url=${url}`)
       .then(function (response) {
-        debugger
-        console.log(response);
+        set(response.config.url);
       })
       .catch(function (error) {
         // handle error
         console.log(error);
       })
-    this.props.setGif(url);
+    // this.props.setGif(url);
     this.props.toggleModal();
   }
 
   mapSearchResults() {
     return this.state.results.map(result => {
-      return <img className="giphy-search-result" src={result.images.downsized.url} onClick={() => this.handleClick(result.images.looping.mp4)}/>
+      return <img alt="gif" className="giphy-search-result" src={result.images.downsized.url} onClick={() => this.handleClick(result.images.looping.mp4)}/>
     });
   }
 
