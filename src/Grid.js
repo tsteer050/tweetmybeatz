@@ -10,6 +10,19 @@ class Grid extends React.Component {
     });
   }
 
+  componentDidUpdate() {
+    if (this.props.beatCreated) this.removeGridGlow();
+  }
+
+  removeGridGlow() {
+    let grid = document.getElementById('grid');
+    if (grid.classList.contains('glowing')) {
+      grid.classList.remove('glowing');
+    }
+    let text = document.getElementById('instruction-text');
+    text.innerHTML = "Press play to hear your beat";
+  }
+
   renderRows() {
     let samples = ["Kick", "Snare", "HiHat (c)", "HiHat (o)", "Cymbal"];
     return samples.map(i => {
@@ -22,6 +35,8 @@ class Grid extends React.Component {
           sample={i}
           currentBeat={this.props.currentBeat}
           activeSamples={this.props.activeSamples}
+          beatCreated={this.props.beatCreated}
+          registerBeatCreated={this.props.registerBeatCreated}
         />
       )
 
@@ -40,7 +55,7 @@ class Grid extends React.Component {
 
   render() {
     return (
-      <div className="grid">
+      <div id="grid" className="grid glowing">
         {this.renderRows()}
         <div className="row-bottom-markers">
           {this.renderRowBottomMarkers()}

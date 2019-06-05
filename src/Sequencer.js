@@ -36,6 +36,8 @@ class Sequencer extends React.Component {
     this.listener = false;
     
     this.state = {
+      beatCreated: false,
+      playHit: false,
       playing: false,
       tempo: 80,
       currentBeat: 1,
@@ -78,6 +80,11 @@ class Sequencer extends React.Component {
     this.setGif = this.setGif.bind(this);
     this.renderGif = this.renderGif.bind(this);
     this.configureRecorder = this.configureRecorder.bind(this);
+    this.stopRecord = this.stopRecord.bind(this);
+    this.convert = this.convert.bind(this);
+    this.finishRecord = this.finishRecord.bind(this);
+    this.registerBeatCreated = this.registerBeatCreated.bind(this);
+    this.registerPlayHit = this.registerPlayHit.bind(this);
   }
 
  
@@ -138,10 +145,8 @@ class Sequencer extends React.Component {
 
   configureRecorder() {
 
-    debugger
     let video = document.getElementById("video");
     let videoTrack = video.captureStream().getVideoTracks()[0];
-
     let audioTrack = this.audioDestination.stream.getAudioTracks()[0];
 
     let combined = new MediaStream([videoTrack, audioTrack]);
@@ -151,9 +156,18 @@ class Sequencer extends React.Component {
       this.chunks.push(e.data);
     };
 
-    this.setState({
-      recorder: recorder
-    });
+    this.recorder = recorder;
+  }
+
+  stopRecord() {
+    this.recorder.stop();
+    this.chunks = [];
+  }
+
+  finishRecord() {
+    this.recorder.stop();
+    //DO SOMETHING WITH THIS.CHUNKS
+    this.chunks = [];
   }
 
   setGif(gif) {
@@ -167,7 +181,7 @@ class Sequencer extends React.Component {
       }
       this.listener = () => {
         if (video.readyState >= 2) {
-          if (!this.state.recorder) this.configureRecorder();
+          if (!this.recorder) this.configureRecorder();
           this.setState({
             recordPossible: true
           });
@@ -275,6 +289,18 @@ class Sequencer extends React.Component {
     });
   }
 
+  registerBeatCreated() {
+    this.setState({
+      beatCreated: true
+    });
+  }
+
+  registerPlayHit() {
+    this.setState({
+      playHit: true
+    });
+  }
+
   nextBeat() {
     let nextBeat = this.state.currentBeat + 1;
     if (nextBeat > 16) nextBeat = 1;
@@ -310,11 +336,15 @@ class Sequencer extends React.Component {
   renderGif() {
 
       return (
-      <video id="video" width="100" height="100" autoPlay >
+      <video id="video" className="video" autoPlay >
         <source src={this.state.gif ? this.state.gif : ""} type="video/mp4" />
       </video>
       )
 
+  }
+
+  convert() {
+    console.log("this function should take the chunks and process them");
   }
         
   render() {
@@ -330,15 +360,23 @@ class Sequencer extends React.Component {
             volume={this.state.volume}
             setVolume={this.setVolume}
             airhorn={this.airhorn}
-            recorder={this.state.recorder}
+            recorder={this.recorder}
             toggleMic={this.toggleMic}
             changeKit={this.changeKit}
             setGif={this.setGif}
             configureRecorder={this.configureRecorder}
             recordPossible={this.state.recordPossible}
+            stopRecord={this.stopRecord}
+            convert={this.convert}
+            finishRecord={this.finishRecord}
+            beatCreated={this.state.beatCreated}
+            playHit={this.state.playHit}
+            registerPlayHit={this.registerPlayHit}
           />
-          <h1 className="app-title">cool beats bro</h1>
-          {this.renderGif()}
+          <div>
+            <h1 className="app-title"><i className="fab fa-twitter" />tweet my beats</h1>
+            {this.renderGif()}
+          </div>
         </div>
         <Grid 
         playing={this.state.playing}
@@ -346,6 +384,8 @@ class Sequencer extends React.Component {
         removeActiveSample={this.removeActiveSample}
         currentBeat={this.state.currentBeat}
         activeSamples={this.state.activeSamples}
+        beatCreated={this.state.beatCreated}
+        registerBeatCreated={this.registerBeatCreated}
         />
       </div>
     )

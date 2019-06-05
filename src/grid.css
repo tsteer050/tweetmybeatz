@@ -119,3 +119,8 @@
   box-shadow: 0 0 10px rgb(196, 46, 255);;
   background-position: 0 100%;
 }
+
+.glowing {
+  border-color: #c918ff;
+  box-shadow: 0 0 10px rgb(196, 46, 255);;
+}

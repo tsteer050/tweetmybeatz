@@ -15,11 +15,14 @@ class Transport extends React.Component {
       micActive: false
     };
 
+    this.recordTimer = null;
+
     this.handleKeyPress = this.handleKeyPress.bind(this);
     this.mute = this.mute.bind(this);
     this.record = this.record.bind(this);
     this.toggleMic = this.toggleMic.bind(this);
     this.renderRecordButton = this.renderRecordButton.bind(this);
+    this.stopRecord = this.stopRecord.bind(this);
   }
 
   componentDidMount() {
@@ -61,6 +64,14 @@ class Transport extends React.Component {
     }
   }
 
+  toggleProgressBar() {
+    let progressBar = document.getElementById('progress-bar-div');
+    let progressBarValue = document.getElementById('progress-value');
+
+    progressBar.classList.toggle('visible');
+    progressBarValue.classList.toggle('progress-value');
+  }
+
   record() {
     if (!this.state.recording) {
       this.props.recorder.start();
@@ -69,6 +80,20 @@ class Transport extends React.Component {
       this.setState({
         recording: true
       });
+
+      this.toggleProgressBar();
+
+      this.recordTimer = setTimeout(() => {
+
+        this.toggleProgressBar();
+        this.setState({
+          recording: false
+        });
+        this.props.stopPlay();
+        this.props.finishRecord();
+
+      }, 8000);
+      // Set a timer to call stop recording after 8 seconds, then call convert afterwards depending on if a new variable is true that is set when recording starts and deactivated when recording stops
     } else {
       this.props.recorder.stop();
       console.log("recorder stopped");
@@ -91,15 +116,27 @@ class Transport extends React.Component {
     modal.classList.toggle("visible");
   }
 
+  stopRecord() {
+    this.props.stopRecord();
+    clearTimeout(this.recordTimer);
+    this.toggleProgressBar();
+    this.setState({
+      recording: false
+    });
+    this.props.stopPlay();
+  }
+
 
   renderRecordButton() {
     if (!this.props.recordPossible) {
       return (
-        <i className="fas fa-circle transport-button inactive-button" />
+        <i className="fas fa-exclamation-circle transport-button inactive-button" />
       )
     } else {
       return (
-        <i className={this.state.recording ? "fas fa-stop-circle transport-button state-active" : "fas fa-circle transport-button"} onClick={this.record} />
+        <i 
+        className={this.state.recording ? "fas fa-stop-circle transport-button state-active" : "fas fa-circle transport-button"} 
+          onClick={this.state.recording ? this.stopRecord : this.record} />
       )
     }
   }
@@ -154,6 +191,14 @@ class Transport extends React.Component {
           <i className="fas fa-bullhorn transport-button" onClick={this.props.airhorn}/>
           <i className="fas fa-video transport-button" onClick={this.toggleModal}/>
           <GiphySearchModal className="giphy-search-modal" toggleModal={this.toggleModal} setGif={this.props.setGif}/>
+        </div>
+        <div id="progress-bar-div">
+          <div className="progress-bar">
+            <span id="progress-value" />
+          </div>
+        </div>
+        <div>
+          <h3 id="instruction-text" className="instruction-text">Create a beat using the buttons below</h3>
         </div>
       </div>
     )
