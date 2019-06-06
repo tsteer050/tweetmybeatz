@@ -12,7 +12,8 @@ class Gridbutton extends React.Component {
   }
 
   handleClick() {
-    if (!this.props.beatCreated) {
+    console.log(this.props.instructionNumber);
+    if (this.props.instructionNumber === 1) {
       this.props.registerBeatCreated();
     }
     if (this.state.active) {

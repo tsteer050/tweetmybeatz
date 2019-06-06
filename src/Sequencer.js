@@ -36,8 +36,7 @@ class Sequencer extends React.Component {
     this.listener = false;
     
     this.state = {
-      beatCreated: false,
-      playHit: false,
+      instructionNumber: 1,
       playing: false,
       tempo: 80,
       currentBeat: 1,
@@ -85,6 +84,7 @@ class Sequencer extends React.Component {
     this.finishRecord = this.finishRecord.bind(this);
     this.registerBeatCreated = this.registerBeatCreated.bind(this);
     this.registerPlayHit = this.registerPlayHit.bind(this);
+    this.registerGifChosen = this.registerGifChosen.bind(this);
   }
 
  
@@ -268,7 +268,13 @@ class Sequencer extends React.Component {
   }
 
   togglePlay() {
-
+    if (this.state.instructionNumber === 2) {
+      this.setState({
+        instructionNumber: 3
+      });
+      let instruction = document.getElementById('instruction-text');
+      instruction.innerHTML = "Select a gif";
+    }
     this.setState({
       playing: !this.state.playing
     });
@@ -291,14 +297,22 @@ class Sequencer extends React.Component {
 
   registerBeatCreated() {
     this.setState({
-      beatCreated: true
+      instructionNumber: 2
     });
   }
 
   registerPlayHit() {
     this.setState({
-      playHit: true
+      instructionNumber: 3
     });
+  }
+
+  registerGifChosen() {
+    this.setState({
+      instructionNumber: 4
+    });
+    let instructions = document.getElementById('instruction-text');
+    instructions.innerHTML = "Click record to generate your video";
   }
 
   nextBeat() {
@@ -365,13 +379,12 @@ class Sequencer extends React.Component {
             changeKit={this.changeKit}
             setGif={this.setGif}
             configureRecorder={this.configureRecorder}
-            recordPossible={this.state.recordPossible}
             stopRecord={this.stopRecord}
             convert={this.convert}
             finishRecord={this.finishRecord}
-            beatCreated={this.state.beatCreated}
-            playHit={this.state.playHit}
+            instructionNumber={this.state.instructionNumber}
             registerPlayHit={this.registerPlayHit}
+            registerGifChosen={this.registerGifChosen}
           />
           <div>
             <h1 className="app-title"><i className="fab fa-twitter" />tweet my beats</h1>
@@ -384,7 +397,7 @@ class Sequencer extends React.Component {
         removeActiveSample={this.removeActiveSample}
         currentBeat={this.state.currentBeat}
         activeSamples={this.state.activeSamples}
-        beatCreated={this.state.beatCreated}
+        instructionNumber={this.state.instructionNumber}
         registerBeatCreated={this.registerBeatCreated}
         />
       </div>

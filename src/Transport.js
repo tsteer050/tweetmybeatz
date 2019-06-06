@@ -23,11 +23,8 @@ class Transport extends React.Component {
     this.toggleMic = this.toggleMic.bind(this);
     this.renderRecordButton = this.renderRecordButton.bind(this);
     this.stopRecord = this.stopRecord.bind(this);
+    this.renderVideoButton = this.renderVideoButton.bind(this);
   }
-
-  componentDidMount() {
-    
-}
 
   updateTempo(e) {
     this.setState({
@@ -128,7 +125,7 @@ class Transport extends React.Component {
 
 
   renderRecordButton() {
-    if (!this.props.recordPossible) {
+    if (this.props.instructionNumber < 4) {
       return (
         <i className="fas fa-exclamation-circle transport-button inactive-button" />
       )
@@ -137,6 +134,18 @@ class Transport extends React.Component {
         <i 
         className={this.state.recording ? "fas fa-stop-circle transport-button state-active" : "fas fa-circle transport-button"} 
           onClick={this.state.recording ? this.stopRecord : this.record} />
+      )
+    }
+  }
+
+  renderVideoButton() {
+    if (this.props.instructionNumber < 3) {
+      return (
+        <i className="fas fa-video transport-button inactive-button" />
+      )
+    } else {
+      return (
+        <i className="fas fa-video transport-button" onClick={this.toggleModal} />
       )
     }
   }
@@ -151,12 +160,23 @@ class Transport extends React.Component {
             alt="Pause" />
         )
       } else {
-        return (
-          <i className="fas fa-play transport-button"
 
-            onClick={this.props.togglePlay}
-            alt="Play" />
+        if (this.props.instructionNumber > 1) {
+          return (
+            <i className="fas fa-play transport-button"
+
+              onClick={this.props.togglePlay}
+              alt="Play" />
+          )
+        } else {
+          return (
+            <i className="fas fa-play transport-button inactive-button"
+
+              
+              alt="Play" />
         )
+        }
+        
       }
   };
 
@@ -189,8 +209,8 @@ class Transport extends React.Component {
           {this.renderRecordButton()}
           <i className={this.state.micActive ? "fas fa-microphone-alt transport-button state-active" : "fas fa-microphone-alt transport-button"} onClick={this.toggleMic}/>
           <i className="fas fa-bullhorn transport-button" onClick={this.props.airhorn}/>
-          <i className="fas fa-video transport-button" onClick={this.toggleModal}/>
-          <GiphySearchModal className="giphy-search-modal" toggleModal={this.toggleModal} setGif={this.props.setGif}/>
+          {this.renderVideoButton()}
+          <GiphySearchModal className="giphy-search-modal" toggleModal={this.toggleModal} setGif={this.props.setGif} instructionNumber={this.props.instructionNumber} registerGifChosen={this.props.registerGifChosen}/>
         </div>
         <div id="progress-bar-div">
           <div className="progress-bar">

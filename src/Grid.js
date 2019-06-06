@@ -11,7 +11,10 @@ class Grid extends React.Component {
   }
 
   componentDidUpdate() {
-    if (this.props.beatCreated) this.removeGridGlow();
+    if (this.props.instructionNumber === 2) {
+      console.log("removing glow");
+      this.removeGridGlow();
+    }
   }
 
   removeGridGlow() {
@@ -19,6 +22,7 @@ class Grid extends React.Component {
     if (grid.classList.contains('glowing')) {
       grid.classList.remove('glowing');
     }
+    console.log('glow removed');
     let text = document.getElementById('instruction-text');
     text.innerHTML = "Press play to hear your beat";
   }
@@ -35,7 +39,7 @@ class Grid extends React.Component {
           sample={i}
           currentBeat={this.props.currentBeat}
           activeSamples={this.props.activeSamples}
-          beatCreated={this.props.beatCreated}
+          instructionNumber={this.props.instructionNumber}
           registerBeatCreated={this.props.registerBeatCreated}
         />
       )
