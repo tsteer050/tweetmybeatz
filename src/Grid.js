@@ -60,9 +60,13 @@ class Grid extends React.Component {
   render() {
     return (
       <div id="grid" className="grid glowing">
-        {this.renderRows()}
-        <div className="row-bottom-markers">
-          {this.renderRowBottomMarkers()}
+        <div className="grid-rows">
+          {this.renderRows()}
+        </div>
+        <div className="row-bottom-marker-div">
+          <div className="row-bottom-markers">
+            {this.renderRowBottomMarkers()}
+          </div>
         </div>
       </div>
     )

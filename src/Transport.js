@@ -125,15 +125,17 @@ class Transport extends React.Component {
 
 
   renderRecordButton() {
-    if (this.props.instructionNumber < 4) {
+    let classString = "";
+    if (this.props.instructionNumber === 4) classString = " glowing";
+    if (this.props.instructionNumber >= 4 && this.props.recordPossible) {
       return (
-        <i className="fas fa-exclamation-circle transport-button inactive-button" />
+        <i
+          className={this.state.recording ? "fas fa-stop-circle transport-button state-active" + classString: "fas fa-circle transport-button"}
+          onClick={this.state.recording ? this.stopRecord : this.record} />
       )
     } else {
       return (
-        <i 
-        className={this.state.recording ? "fas fa-stop-circle transport-button state-active" : "fas fa-circle transport-button"} 
-          onClick={this.state.recording ? this.stopRecord : this.record} />
+        <i className="fas fa-exclamation-circle transport-button inactive-button" />
       )
     }
   }
@@ -145,7 +147,10 @@ class Transport extends React.Component {
       )
     } else {
       return (
-        <i className="fas fa-video transport-button" onClick={this.toggleModal} />
+        <i 
+        className={this.props.instructionNumber === 3 ? "fas fa-video transport-button glowing" : "fas fa-video transport-button"} 
+        onClick={this.toggleModal} 
+        />
       )
     }
   }
@@ -163,7 +168,7 @@ class Transport extends React.Component {
 
         if (this.props.instructionNumber > 1) {
           return (
-            <i className="fas fa-play transport-button"
+            <i className={this.props.instructionNumber === 2 ? "fas fa-play transport-button glowing" : "fas fa-play transport-button"}
 
               onClick={this.props.togglePlay}
               alt="Play" />
@@ -182,6 +187,7 @@ class Transport extends React.Component {
 
     return (
       <div className="transport">
+        <h1 className="app-title"><i className="fab fa-twitter" />tweet my beats</h1>
         <div className="volume-controls">
           <i className={this.state.volume < 5 ? "fas fa-volume-mute mute-button" : "fas fa-volume-up mute-button"} onClick={this.mute}></i>
           <input type="range" min="0" max="100" className="volume-slider" value={this.state.volume} onChange={(e) => { this.updateVolume(e); this.props.setVolume(this.state.volume); }} />
@@ -217,9 +223,7 @@ class Transport extends React.Component {
             <span id="progress-value" />
           </div>
         </div>
-        <div>
-          <h3 id="instruction-text" className="instruction-text">Create a beat using the buttons below</h3>
-        </div>
+
       </div>
     )
   }

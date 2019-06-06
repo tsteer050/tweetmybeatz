@@ -7,6 +7,7 @@
   border-radius: 8px;
   display: flex;
   flex-direction: column;
+  align-items: center;
   width: 825px;
   height: 700px;
 }
@@ -16,18 +17,42 @@
   font-size: 48px;
   color: rgb(196, 46, 255);
   text-shadow: 0 0 10px rgb(196, 46, 255);;
-  margin-left: 40px;
+  width: 300px;
 }
 
 .sequencer-top {
   display: flex;
+  min-height: 380px;
+}
+
+@keyframes videoglow {
+  0% { box-shadow: 0 0 4px #fff; }
+  40% { box-shadow: 0 0 14px #fff; }
+  60% { box-shadow: 0 0 14px #fff; }
+  100% { box-shadow: 0 0 4px #fff; }
 }
 
 .video {
-  width: 150px;
-  height: 150px;
+  width: 250px;
+  height: 250px;
+  margin-left: 50px;
   border-radius: 8px;
-  background-color: black;
+  background-image:
+  radial-gradient(
+    #240a2b,
+    #161616
+  );
   border: 2px solid rgb(32, 31, 31);
-  box-shadow: 0px 0px 8px #fff;
+
+}
+
+.videoglowing {
+  animation: videoglow 3000ms infinite;
+}
+
+.video-div {
+  width: 350px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

@@ -1,10 +1,11 @@
 .grid {
-  margin-right: 80px;
+  width: 680px;
+
 }
 
 .grid-row {
   display: flex;
-  margin-left: 50px;
+
   background-image: linear-gradient(transparent, rgba(0,0,0,0.6));
   border: 1px solid rgb(51, 49, 49);
   height: 41px;
@@ -67,9 +68,15 @@
   border: 2px solid #c918ff;
 }
 
+.row-bottom-marker-div {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+
 .row-bottom-markers {
   display: flex;
-  margin-left: 143px;
+  margin-right: 11px;
 }
 
 .row-bottom-markers h5 {
@@ -120,7 +127,14 @@
   background-position: 0 100%;
 }
 
+
+@keyframes glowing {
+  0% { box-shadow: 0 0 -3px #c918ff; }
+  40% { box-shadow: 0 0 20px #c918ff; }
+  60% { box-shadow: 0 0 20px #c918ff; }
+  100% { box-shadow: 0 0 -3px #c918ff; }
+}
+
 .glowing {
-  border-color: #c918ff;
-  box-shadow: 0 0 10px rgb(196, 46, 255);;
+  animation: glowing 4000ms infinite;
 }

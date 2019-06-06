@@ -136,6 +136,8 @@ class Sequencer extends React.Component {
         this.microphone.connect(this.micGainNode);
         this.micGainNode.gain.value = 0;
       });
+
+
   }
 
   componentDidUpdate() {
@@ -385,12 +387,14 @@ class Sequencer extends React.Component {
             instructionNumber={this.state.instructionNumber}
             registerPlayHit={this.registerPlayHit}
             registerGifChosen={this.registerGifChosen}
+            recordPossible={this.state.recordPossible}
           />
-          <div>
-            <h1 className="app-title"><i className="fab fa-twitter" />tweet my beats</h1>
+          <div className="video-div">
+            
             {this.renderGif()}
           </div>
         </div>
+        <h3 id="instruction-text" className="instruction-text">Create a beat using the buttons below</h3>
         <Grid 
         playing={this.state.playing}
         addActiveSample={this.addActiveSample}
