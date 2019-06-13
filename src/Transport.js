@@ -216,6 +216,11 @@ class Transport extends React.Component {
           <i className={this.state.micActive ? "fas fa-microphone-alt transport-button state-active" : "fas fa-microphone-alt transport-button"} onClick={this.toggleMic}/>
           <i className="fas fa-bullhorn transport-button" onClick={this.props.airhorn}/>
           {this.renderVideoButton()}
+          {this.props.user.name ? 
+            <span className="TEMP-TWEET-BUTTON" onClick={this.props.closeCard}>Close</span>
+          : <span className="TEMP-TWEET-BUTTON" onClick={this.props.startAuth}>Tweet</span>
+        }
+          
           <GiphySearchModal className="giphy-search-modal" toggleModal={this.toggleModal} setGif={this.props.setGif} instructionNumber={this.props.instructionNumber} registerGifChosen={this.props.registerGifChosen}/>
         </div>
         <div id="progress-bar-div">

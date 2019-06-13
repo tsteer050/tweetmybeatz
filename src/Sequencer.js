@@ -1,7 +1,7 @@
 import React from 'react';
 import Grid from './Grid';
 import Transport from './Transport';
-
+import io from 'socket.io-client';
 
 import defaultSamples from './resources/samples/DefaultSamples';
 import boutiqueSamples from './resources/samples/Boutique 78/BoutiqueSamples';
@@ -11,6 +11,8 @@ import streetSamples from './resources/samples/Street/StreetSamples';
 
 import './sequencer.css';
 
+const API_URL = '/';
+const socket = io(API_URL);
 
 const kits = {
   "Default": defaultSamples,
@@ -34,8 +36,11 @@ class Sequencer extends React.Component {
 
     this.chunks = [];
     this.listener = false;
+    this.popup = null;
     
     this.state = {
+      user: {},
+      disabled: '',
       instructionNumber: 1,
       playing: false,
       tempo: 80,
@@ -85,11 +90,19 @@ class Sequencer extends React.Component {
     this.registerBeatCreated = this.registerBeatCreated.bind(this);
     this.registerPlayHit = this.registerPlayHit.bind(this);
     this.registerGifChosen = this.registerGifChosen.bind(this);
+
+    this.closeCard = this.closeCard.bind(this);
+    this.startAuth = this.startAuth.bind(this);
+    this.openPopup = this.openPopup.bind(this);
+    this.checkPopup = this.checkPopup.bind(this);
   }
 
  
   componentDidMount() {
-
+    socket.on('user', user => {
+      this.popup.close();
+      this.setState({ user });
+    });
     try {
       // Fix up for prefixing
       window.AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -144,6 +157,43 @@ class Sequencer extends React.Component {
     this.play();
 
   }
+
+  checkPopup() {
+    const check = setInterval(() => {
+      const { popup } = this
+      if (!popup || popup.closed || popup.closed === undefined) {
+        clearInterval(check);
+        this.setState({ disabled: '' });
+      }
+    }, 1000);
+  }
+
+  openPopup() {
+    const width = 600, height = 600;
+    const left = (window.innerWidth / 2) - (width / 2);
+    const top = (window.innerHeight / 2) - (height / 2);
+
+    const url = `${API_URL}/twitter?socketId=${socket.id}`;
+
+    return window.open(url, '',
+      `toolbar=no, location=no, directories=no, status=no, menubar=no, 
+      scrollbars=no, resizable=no, copyhistory=no, width=${width}, 
+      height=${height}, top=${top}, left=${left}`
+    );
+  }
+
+  startAuth() {
+    if (!this.state.disabled) {
+      this.popup = this.openPopup();
+      this.checkPopup();
+      this.setState({ disabled: 'disabled' });
+    }
+  }
+
+  closeCard() {
+    this.setState({ user: {} });
+  }
+
 
   configureRecorder() {
 
@@ -388,6 +438,14 @@ class Sequencer extends React.Component {
             registerPlayHit={this.registerPlayHit}
             registerGifChosen={this.registerGifChosen}
             recordPossible={this.state.recordPossible}
+
+            closeCard={this.closeCard}
+            startAuth={this.startAuth}
+            openPopup={this.openPopup}
+            checkPopup={this.checkPopup}
+            disabled={this.state.disabled}
+            user={this.state.user}
+
           />
           <div className="video-div">
             
