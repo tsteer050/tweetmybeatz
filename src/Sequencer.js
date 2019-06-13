@@ -11,7 +11,7 @@ import streetSamples from './resources/samples/Street/StreetSamples';
 
 import './sequencer.css';
 
-const API_URL = '/';
+const API_URL = 'http://127.0.0.1:5000';
 const socket = io(API_URL);
 
 const kits = {

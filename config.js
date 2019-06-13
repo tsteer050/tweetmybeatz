@@ -1,6 +1,6 @@
 const callbackURL = process.env.CALLBACK_URL
   ? process.env.CALLBACK_URL
-  : 'localhost:5000/twitter/callback';
+  : 'http://127.0.0.1:5000/twitter/callback';
 
 exports.CLIENT_ORIGIN = process.env.CLIENT_ORIGIN
   ? process.env.CLIENT_ORIGIN

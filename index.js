@@ -16,7 +16,7 @@ const TWITTER_CONFIG = {
   consumerSecret: 'P6cfYL1s66MCr9LCTRS6yb1kCw1JQmSIjahWDzgxXJ6oPjKvI3',
   // make sure the call back url matches what was set on Twitter
   // when registering the app
-  callbackURL: 'http://http://127.0.0.1:5000/twitter/callback'
+  callbackURL: 'http://127.0.0.1:5000/twitter/callback'
 };
 
 
@@ -58,19 +58,21 @@ passport.use(new TwitterStrategy(
     // save the user right here to a database if you want
     const user = {
       name: profile.username,
-      photo: profile.photos[0].value.replace(/_normal/, '')
+      photo: profile.photos[0].value.replace(/_normal/, ''),
+      accessToken
     };
     cb(null, user);
   })
 );
 
 // Middleware that triggers the PassportJs authentication process
-const twitterAuth = passport.authenticate('twitter')
+const twitterAuth = passport.authenticate('twitter');
 
 // This custom middleware picks off the socket id (that was put on req.query)
 // and stores it in the session so we can send back the right info to the 
 // right socket
 const addSocketIdToSession = (req, res, next) => {
+  
   req.session.socketId = req.query.socketId;
   next();
 };
@@ -107,3 +109,5 @@ app.get('/gif', (req, res) => {
 });
 
 server.listen(5000, () => console.log('listening on port 5000'));
+
+// http://localhost:5000/twitter?socketId=XdOCKJvgO0vQhwCOAAAL
