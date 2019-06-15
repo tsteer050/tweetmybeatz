@@ -220,8 +220,9 @@ class Sequencer extends React.Component {
         console.log(this.blob);
         let data = new FormData();
         data.set('blob', this.blob);
-        data.set('oauth_token', this.state.user.oauthToken);
-        data.set('oauth_token_secret', this.state.user.oauthTokenSecret);
+        data.set('oauth_token', this.state.user.token);
+        data.set('oauth_token_secret', this.state.user.tokenSecret);
+        data.set('handle', this.state.user.name);
 
         Axios.post('http://127.0.0.1:5000/video', data).then(function (response) {
           // console.log(response);

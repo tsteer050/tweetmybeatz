@@ -67,13 +67,14 @@ passport.deserializeUser((obj, cb) => cb(null, obj))
 // Basic setup with passport and Twitter
 passport.use(new TwitterStrategy(
   TWITTER_CONFIG,
-  (accessToken, refreshToken, profile, cb) => {
+  (token, tokenSecret, profile, cb) => {
     // console.log("PROFILE---------------------", accessToken, refreshToken);
     // save the user right here to a database if you want
     const user = {
       name: profile.username,
       photo: profile.photos[0].value.replace(/_normal/, ''),
-
+      token,  
+      tokenSecret
     };
     cb(null, user);
   })
@@ -123,12 +124,13 @@ app.post('/video', formidable, (req, res) => {
   const blob = req.files.blob;
   const oauthToken = req.fields.oauth_token;
   const oauthTokenSecret = req.fields.oauth_token_secret;
+  const handle = req.fields.handle;
   console.log("tokens:", oauthToken, oauthTokenSecret);
   let url = blob.path;
 
   const myTweetObj = {
     content: '#tweetmybeats',
-    twitter_handle: 'trevolution11',
+    twitter_handle: handle,
     access_token: oauthToken,
     access_secret: oauthTokenSecret
   };
