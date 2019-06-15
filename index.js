@@ -21,8 +21,8 @@ const Twit = require('Twit');
 // Private api keys that you will get when registering an app on 
 // apps.twitter.com
 const TWITTER_CONFIG = {
-  consumerKey: 'B6g2KyvbyjR4mnEY4KudA7kDR',
-  consumerSecret: 'P6cfYL1s66MCr9LCTRS6yb1kCw1JQmSIjahWDzgxXJ6oPjKvI3',
+  consumerKey: '6cyqAYryuNVrzDqj3kuJVZKo8',
+  consumerSecret: 'RoBVScAziZEFLrF6duDaI6Hmo4O2MqfYXZ89FZ6KEHe3yciuZm',
   // make sure the call back url matches what was set on Twitter
   // when registering the app
   callbackURL: 'http://127.0.0.1:5000/twitter/callback'
