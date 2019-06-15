@@ -9,10 +9,12 @@
     "cors": "^2.8.5",
     "dotenv": "^8.0.0",
     "express": "^4.17.1",
+    "express-formidable": "^1.2.0",
     "express-session": "^1.16.2",
     "ffmpeg": "0.0.4",
     "file-saver": "^2.0.2",
     "giphy-js-sdk-core": "^1.0.6",
+    "handbrake-js": "^3.0.8",
     "node-url-downloader": "^0.1.9",
     "passport": "^0.4.0",
     "passport-twitter": "^1.0.4",
@@ -22,7 +24,8 @@
     "request": "^2.88.0",
     "request-promise": "^4.2.4",
     "socket.io": "^2.2.0",
-    "socket.io-client": "^2.2.0"
+    "socket.io-client": "^2.2.0",
+    "twit": "^2.2.11"
   },
   "scripts": {
     "start": "react-scripts start",

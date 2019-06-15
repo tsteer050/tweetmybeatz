@@ -2,12 +2,15 @@ import React from 'react';
 import Grid from './Grid';
 import Transport from './Transport';
 import io from 'socket.io-client';
+import Axios from 'axios';
 
 import defaultSamples from './resources/samples/DefaultSamples';
 import boutiqueSamples from './resources/samples/Boutique 78/BoutiqueSamples';
 import electroSamples from './resources/samples/Electro/ElectroSamples';
 import heavySamples from './resources/samples/Heavy/HeavySamples';
 import streetSamples from './resources/samples/Street/StreetSamples';
+
+
 
 import './sequencer.css';
 
@@ -37,6 +40,8 @@ class Sequencer extends React.Component {
     this.chunks = [];
     this.listener = false;
     this.popup = null;
+    this.blob = null;
+
     
     this.state = {
       user: {},
@@ -202,10 +207,39 @@ class Sequencer extends React.Component {
     let audioTrack = this.audioDestination.stream.getAudioTracks()[0];
 
     let combined = new MediaStream([videoTrack, audioTrack]);
-    let recorder = new MediaRecorder(combined);
+    var options = { mimeType: 'video/webm' }; 
+    let recorder = new MediaRecorder(combined, options);
 
     recorder.ondataavailable = (e) => {
       this.chunks.push(e.data);
+    };
+
+    recorder.onstop = () => {
+      if (this.chunks.length) {
+        this.blob = new Blob(this.chunks, { type: 'video/webm' });
+        console.log(this.blob);
+        let data = new FormData();
+        data.set('blob', this.blob);
+        data.set('oauth_token', this.state.user.oauthToken);
+        data.set('oauth_token_secret', this.state.user.oauthTokenSecret);
+
+        Axios.post('http://127.0.0.1:5000/video', data).then(function (response) {
+          // console.log(response);
+        })
+          .catch(function (error) {
+            // handle error
+            // console.log(error);
+          });
+        console.log("video url updated");
+        // Axios.get(`/video/?blob=${this.blob}`)
+        //   .then(function (response) {
+        //     console.log(response);
+        //   })
+        //   .catch(function (error) {
+        //     // handle error
+        //     console.log(error);
+        //   })
+      }
     };
 
     this.recorder = recorder;
@@ -401,11 +435,11 @@ class Sequencer extends React.Component {
 
   renderGif() {
 
-      return (
-      <video id="video" className="video" autoPlay >
+    return (
+      <video id="video" className="video" autoPlay loop>
         <source src={this.state.gif ? this.state.gif : ""} type="video/mp4" />
       </video>
-      )
+    );
 
   }
 
