@@ -55,7 +55,7 @@ class GiphySearchModal extends React.Component {
       })
     // this.props.setGif(url);
     if (this.props.instructionNumber === 3) {
-      this.props.registerGifChosen();
+      this.props.changeInstructionNumber(4);
     }
     this.props.toggleModal();
   }

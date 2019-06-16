@@ -102,15 +102,15 @@ app.get('/twitter', addSocketIdToSession, twitterAuth);
 // session. 
 app.get('/twitter/callback', twitterAuth, (req, res) => {
   console.log("--------------------------------------");
-  console.log(req);
+  console.log(req.user);
   console.log("--------------------------------------");
-  let oauthObject = Object.values(req.sessionStore.sessions)[0];
-  let parsedOauthObject = JSON.parse(oauthObject)["oauth:twitter"];
-  let oauthToken = parsedOauthObject.oauth_token;
-  let oauthTokenSecret = parsedOauthObject.oauth_token_secret;
+  // let oauthObject = Object.values(req.sessionStore.sessions)[0];
+  // let parsedOauthObject = JSON.parse(oauthObject)["oauth:twitter"];
+  // let oauthToken = parsedOauthObject.oauth_token;
+  // let oauthTokenSecret = parsedOauthObject.oauth_token_secret;
   let user = req.user;
-  user.oauthToken = oauthToken;
-  user.oauthTokenSecret = oauthTokenSecret;
+  // user.oauthToken = oauthToken;
+  // user.oauthTokenSecret = oauthTokenSecret;
   
   io.in(req.session.socketId).emit('user', user);
   res.end();

@@ -24,6 +24,7 @@ class Transport extends React.Component {
     this.renderRecordButton = this.renderRecordButton.bind(this);
     this.stopRecord = this.stopRecord.bind(this);
     this.renderVideoButton = this.renderVideoButton.bind(this);
+    this.renderTweetButton = this.renderTweetButton.bind(this);
   }
 
   updateTempo(e) {
@@ -126,11 +127,11 @@ class Transport extends React.Component {
 
   renderRecordButton() {
     let classString = "";
-    if (this.props.instructionNumber === 4) classString = " glowing";
-    if (this.props.instructionNumber >= 4 && this.props.recordPossible) {
+    if (this.props.instructionNumber === 5) classString = " glowing";
+    if (this.props.instructionNumber >= 5 && this.props.recordPossible) {
       return (
         <i
-          className={this.state.recording ? "fas fa-stop-circle transport-button state-active" + classString: "fas fa-circle transport-button"}
+          className={this.state.recording ? "fas fa-stop-circle transport-button state-active" : "fas fa-circle transport-button" + classString}
           onClick={this.state.recording ? this.stopRecord : this.record} />
       )
     } else {
@@ -153,6 +154,19 @@ class Transport extends React.Component {
         />
       )
     }
+  }
+
+  renderTweetButton() {
+    if (this.props.instructionNumber === 4) {
+      return (
+        <i className="fab fa-twitter transport-button glowing" onClick={this.props.startAuth} />
+      )
+    } else {
+      return (
+        <i className="fab fa-twitter transport-button inactive-button" />
+      )
+    }
+      // <span className="TEMP-TWEET-BUTTON" onClick={this.props.closeCard}>Close</span>
   }
 
   render() {
@@ -216,12 +230,9 @@ class Transport extends React.Component {
           <i className={this.state.micActive ? "fas fa-microphone-alt transport-button state-active" : "fas fa-microphone-alt transport-button"} onClick={this.toggleMic}/>
           <i className="fas fa-bullhorn transport-button" onClick={this.props.airhorn}/>
           {this.renderVideoButton()}
-          {this.props.user.name ? 
-            <span className="TEMP-TWEET-BUTTON" onClick={this.props.closeCard}>Close</span>
-          : <span className="TEMP-TWEET-BUTTON" onClick={this.props.startAuth}>Tweet</span>
-        }
+          {this.renderTweetButton()}
           
-          <GiphySearchModal className="giphy-search-modal" toggleModal={this.toggleModal} setGif={this.props.setGif} instructionNumber={this.props.instructionNumber} registerGifChosen={this.props.registerGifChosen}/>
+          <GiphySearchModal className="giphy-search-modal" toggleModal={this.toggleModal} setGif={this.props.setGif} instructionNumber={this.props.instructionNumber} changeInstructionNumber={this.props.changeInstructionNumber}/>
         </div>
         <div id="progress-bar-div">
           <div className="progress-bar">

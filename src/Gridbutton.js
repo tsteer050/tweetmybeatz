@@ -12,9 +12,9 @@ class Gridbutton extends React.Component {
   }
 
   handleClick() {
-    console.log(this.props.instructionNumber);
+    
     if (this.props.instructionNumber === 1) {
-      this.props.registerBeatCreated();
+      this.props.changeInstructionNumber(2);
     }
     if (this.state.active) {
       this.props.removeActiveSample(this.props.sample, this.props.beat);

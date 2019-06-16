@@ -41,10 +41,20 @@ class Sequencer extends React.Component {
     this.listener = false;
     this.popup = null;
     this.blob = null;
-
+    this.instructions = [
+      "",
+      "Create a beat using the buttons below",
+      "Press play to hear your beat",
+      "Select a gif",
+      "Click to sign in to Twitter",
+      "Click record to generate your video",
+      "Enter the text for your tweet and click to send",
+      ""
+    ];
     
     this.state = {
-      user: {},
+      inputText: "",
+      user: null,
       disabled: '',
       instructionNumber: 1,
       playing: false,
@@ -92,9 +102,9 @@ class Sequencer extends React.Component {
     this.stopRecord = this.stopRecord.bind(this);
     this.convert = this.convert.bind(this);
     this.finishRecord = this.finishRecord.bind(this);
-    this.registerBeatCreated = this.registerBeatCreated.bind(this);
-    this.registerPlayHit = this.registerPlayHit.bind(this);
-    this.registerGifChosen = this.registerGifChosen.bind(this);
+    this.registerTwitterLoggedIn = this.registerTwitterLoggedIn.bind(this);
+    this.tweetVideo = this.tweetVideo.bind(this);
+    this.changeInstructionNumber = this.changeInstructionNumber.bind(this);
 
     this.closeCard = this.closeCard.bind(this);
     this.startAuth = this.startAuth.bind(this);
@@ -160,7 +170,7 @@ class Sequencer extends React.Component {
 
   componentDidUpdate() {
     this.play();
-
+    if (this.state.user) this.registerTwitterLoggedIn();
   }
 
   checkPopup() {
@@ -217,33 +227,25 @@ class Sequencer extends React.Component {
     recorder.onstop = () => {
       if (this.chunks.length) {
         this.blob = new Blob(this.chunks, { type: 'video/webm' });
-        console.log(this.blob);
-        let data = new FormData();
-        data.set('blob', this.blob);
-        data.set('oauth_token', this.state.user.token);
-        data.set('oauth_token_secret', this.state.user.tokenSecret);
-        data.set('handle', this.state.user.name);
-
-        Axios.post('http://127.0.0.1:5000/video', data).then(function (response) {
-          // console.log(response);
-        })
-          .catch(function (error) {
-            // handle error
-            // console.log(error);
-          });
-        console.log("video url updated");
-        // Axios.get(`/video/?blob=${this.blob}`)
-        //   .then(function (response) {
-        //     console.log(response);
-        //   })
-        //   .catch(function (error) {
-        //     // handle error
-        //     console.log(error);
-        //   })
+        this.changeInstructionNumber(6);
       }
     };
 
     this.recorder = recorder;
+  }
+
+  tweetVideo() {
+    let data = new FormData();
+    data.set('blob', this.blob);
+    data.set('oauth_token', this.state.user.token);
+    data.set('oauth_token_secret', this.state.user.tokenSecret);
+    data.set('handle', this.state.user.name);
+    data.set('text', this.state.inputText);
+
+    Axios.post('http://127.0.0.1:5000/video', data).then(function (response) {
+    }).catch(function (error) {
+      throw (error);
+    });
   }
 
   stopRecord() {
@@ -382,24 +384,14 @@ class Sequencer extends React.Component {
     });
   }
 
-  registerBeatCreated() {
-    this.setState({
-      instructionNumber: 2
-    });
-  }
-
-  registerPlayHit() {
-    this.setState({
-      instructionNumber: 3
-    });
-  }
-
-  registerGifChosen() {
-    this.setState({
-      instructionNumber: 4
-    });
-    let instructions = document.getElementById('instruction-text');
-    instructions.innerHTML = "Click record to generate your video";
+  registerTwitterLoggedIn() {
+    if (this.state.instructionNumber === 4) {
+      this.setState({
+        instructionNumber: 5
+      });
+      let instructions = document.getElementById('instruction-text');
+      instructions.innerHTML = "Click record to generate your video";
+    }
   }
 
   nextBeat() {
@@ -434,14 +426,49 @@ class Sequencer extends React.Component {
     this.state.samples["Airhorn"].play();
   }
 
+  handleInputUpdate(e) {
+    if (e.target.value.length <= 240) {
+      this.setState({
+        inputText: e.target.value
+      });
+    }
+  }
+
+  changeInstructionNumber(num) {
+    this.setState({
+      instructionNumber: num
+    });
+  }
+
+  handleInputSubmit(e) {
+    e.preventDefault();
+    console.log("sending tweet:", this.state.inputText);
+    this.tweetVideo();
+    this.setState({
+      inputText: "",
+      instructionNumber: 7
+    });
+  }
+
   renderGif() {
-
-    return (
-      <video id="video" className="video" autoPlay loop>
-        <source src={this.state.gif ? this.state.gif : ""} type="video/mp4" />
-      </video>
-    );
-
+    if (this.state.instructionNumber === 6) {
+      return (
+        <div className="text-input-div">
+            <input 
+            className="tweet-text-input" 
+            placeholder="#tweetmybeatz" 
+            text={this.state.inputText} 
+            onUpdate={(e) => this.handleInputUpdate} 
+            onSubmit={(e) => this.handleInputSubmit} />
+        </div>
+      )
+    } else {
+      return (
+        <video id="video" className="video" autoPlay loop>
+          <source src={this.state.gif ? this.state.gif : ""} type="video/mp4" />
+        </video>
+      );
+    }
   }
 
   convert() {
@@ -470,9 +497,8 @@ class Sequencer extends React.Component {
             convert={this.convert}
             finishRecord={this.finishRecord}
             instructionNumber={this.state.instructionNumber}
-            registerPlayHit={this.registerPlayHit}
-            registerGifChosen={this.registerGifChosen}
             recordPossible={this.state.recordPossible}
+            changeInstructionNumber={this.changeInstructionNumber}
 
             closeCard={this.closeCard}
             startAuth={this.startAuth}
@@ -487,7 +513,7 @@ class Sequencer extends React.Component {
             {this.renderGif()}
           </div>
         </div>
-        <h3 id="instruction-text" className="instruction-text">Create a beat using the buttons below</h3>
+        <h3 id="instruction-text" className="instruction-text">{this.instructions[this.state.instructionNumber]}</h3>
         <Grid 
         playing={this.state.playing}
         addActiveSample={this.addActiveSample}
@@ -495,7 +521,7 @@ class Sequencer extends React.Component {
         currentBeat={this.state.currentBeat}
         activeSamples={this.state.activeSamples}
         instructionNumber={this.state.instructionNumber}
-        registerBeatCreated={this.registerBeatCreated}
+        changeInstructionNumber={this.changeInstructionNumber}
         />
       </div>
     )
