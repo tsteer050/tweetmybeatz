@@ -62,7 +62,7 @@ class GiphySearchModal extends React.Component {
 
   mapSearchResults() {
     return this.state.results.map(result => {
-      return <img alt="gif" className="giphy-search-result" src={result.images.downsized.url} onClick={() => this.handleClick(result.images.looping.mp4)}/>
+      return <img alt="gif" key={result.id} className="giphy-search-result" src={result.images.downsized.url} onClick={() => this.handleClick(result.images.looping.mp4)}/>
     });
   }
 
@@ -71,10 +71,14 @@ class GiphySearchModal extends React.Component {
 
     return (
       <div id="giphy-search-modal-view" className="giphy-search-modal-view">
-        <h1>hi</h1>
-        <button onClick={this.props.toggleModal}>X</button>
+        <h1 className="modal-header">Select your gif</h1>
+        <div className="modal-giphy">
+          <h5 className="powered-by-giphy">Powered by</h5>
+          <div className="giphy-logo" />
+        </div>
+        <button className="close-modal-button" onClick={this.props.toggleModal}>X</button>
         <form onSubmit={(e) => this.search(e)}>
-          <input type="text" placeholder="Enter search here..." onChange={(e) => this.handleChange(e)} />
+          <input className="modal-input" type="text" placeholder="Enter search here..." onChange={(e) => this.handleChange(e)} />
         </form>
         <div className="search-results">
           {this.mapSearchResults()}

@@ -17,7 +17,7 @@ class App extends React.Component {
     if (!this.state.load) {
       return (
         <div className="App">
-          <button onClick={() => this.setState({load: true})}>Hit me with them beats homie!</button>
+          <button className="start-button glowing" onClick={() => this.setState({load: true})}>Drop the beat</button>
         </div>
       )
     } else {

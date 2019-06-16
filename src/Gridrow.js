@@ -20,12 +20,9 @@ class Gridrow extends React.Component {
           instructionNumber={this.props.instructionNumber}
           changeInstructionNumber={this.props.changeInstructionNumber}
           highlight={(this.props.playing && i === this.props.currentBeat) ? "highlight-grid-button" : ""}
-          
-          
         />
       )
-
-    }) ;
+    });
   }
 
   checkMeter() {
@@ -38,7 +35,7 @@ class Gridrow extends React.Component {
     return (
       <div>
         <div className="grid-row">
-          <button className="grid-row-sample-button">{this.props.sample}</button>
+          <button className="grid-row-sample-button" onClick={() => this.props.playSample(this.props.sample)}>{this.props.sample}</button>
           <div className={this.checkMeter() ? "meter meter-active" : "meter meter-off"}/>
           <div className="grid-row-buttons">
             {this.renderButtons()}

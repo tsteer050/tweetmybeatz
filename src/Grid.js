@@ -24,6 +24,7 @@ class Grid extends React.Component {
           activeSamples={this.props.activeSamples}
           instructionNumber={this.props.instructionNumber}
           changeInstructionNumber={this.props.changeInstructionNumber}
+          playSample={this.props.playSample}
         />
       )
 

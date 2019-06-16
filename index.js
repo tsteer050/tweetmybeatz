@@ -125,11 +125,11 @@ app.post('/video', formidable, (req, res) => {
   const oauthToken = req.fields.oauth_token;
   const oauthTokenSecret = req.fields.oauth_token_secret;
   const handle = req.fields.handle;
-  console.log("tokens:", oauthToken, oauthTokenSecret);
+  const tweetText = req.fields.text;
   let url = blob.path;
 
   const myTweetObj = {
-    content: '#tweetmybeats',
+    content: tweetText,
     twitter_handle: handle,
     access_token: oauthToken,
     access_secret: oauthTokenSecret
@@ -140,36 +140,27 @@ app.post('/video', formidable, (req, res) => {
     const T = new Twit({
       consumer_key: TWITTER_CREDS.consumerKey,
       consumer_secret: TWITTER_CREDS.consumerSecret,
-      access_token: '1022714606-6Lks9M9ueBxhfFLZGU23L9KaqZ70ozmORSBNyfm',
-      access_token_secret: 'w5OSEFOYcDMvt8Yyi1Vt53DXkheZnf7scuEWI4kuqh302'
+      access_token: oauthToken,
+      access_token_secret: oauthTokenSecret
     });
 
     const PATH = path.join(__dirname, `beat.mp4`);
 
-
-
-
     T.postMediaChunked({ file_path: PATH }, function (err, data, response) {
-      // console.log("error:", err);
-      console.log("data:", data);
-      // console.log("response:", response);
+
       const mediaIdStr = data.media_id_string;
-      const mediaId = data.media_id;
       const meta_params = { media_id: mediaIdStr };
+      myTweetObj.content = data.text;
+
       tweetInterval = setTimeout(() => {
         T.post('media/metadata/create', meta_params, function (err, data, response) {
 
           if (!err) {
-            // console.log("we made it!");
-            const params = { status: myTweetObj.content, media_ids: [mediaIdStr] };
-            console.log(params);
+            const params = { status: tweetText, media_ids: [mediaIdStr] };
             T.post('statuses/update', params, function (err, tweet, response) {
-              // console.log("---------");
-              // console.log("data:", data);
 
-              // console.log("response:", response);
               console.log("error:", err);
-              // console.log(tweet);
+
               const base = 'https://twitter.com/';
               const handle = myTweetObj.twitter_handle;
               const tweet_id = tweet.id_str;

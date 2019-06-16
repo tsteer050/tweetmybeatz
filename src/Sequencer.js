@@ -45,11 +45,11 @@ class Sequencer extends React.Component {
       "",
       "Create a beat using the buttons below",
       "Press play to hear your beat",
-      "Select a gif",
+      "Click to select a gif",
       "Click to sign in to Twitter",
       "Click record to generate your video",
-      "Enter the text for your tweet and click to send",
-      ""
+      "Enter the text for your Tweet and click to send",
+      "You Tweeted a sick beat.  People probably like you now"
     ];
     
     this.state = {
@@ -100,11 +100,11 @@ class Sequencer extends React.Component {
     this.renderGif = this.renderGif.bind(this);
     this.configureRecorder = this.configureRecorder.bind(this);
     this.stopRecord = this.stopRecord.bind(this);
-    this.convert = this.convert.bind(this);
     this.finishRecord = this.finishRecord.bind(this);
-    this.registerTwitterLoggedIn = this.registerTwitterLoggedIn.bind(this);
     this.tweetVideo = this.tweetVideo.bind(this);
     this.changeInstructionNumber = this.changeInstructionNumber.bind(this);
+    this.emptyChunks = this.emptyChunks.bind(this);
+    this.playSample = this.playSample.bind(this);
 
     this.closeCard = this.closeCard.bind(this);
     this.startAuth = this.startAuth.bind(this);
@@ -119,7 +119,6 @@ class Sequencer extends React.Component {
       this.setState({ user });
     });
     try {
-      // Fix up for prefixing
       window.AudioContext = window.AudioContext || window.webkitAudioContext;
       this.audioContext = new AudioContext();
       
@@ -132,7 +131,7 @@ class Sequencer extends React.Component {
     this.audioDestination = this.audioContext.createMediaStreamDestination();
     this.gainNode.connect(this.audioDestination);
     this.gainNode.connect(this.audioContext.destination);
-    // this.mediaRecorder = new MediaRecorder(this.audioDestination.stream);
+
     samples.forEach(key => {
       const sample = defaultSamples[key];
       const sampleAudio = new Audio(sample);
@@ -164,13 +163,11 @@ class Sequencer extends React.Component {
         this.microphone.connect(this.micGainNode);
         this.micGainNode.gain.value = 0;
       });
-
-
   }
 
   componentDidUpdate() {
     this.play();
-    if (this.state.user) this.registerTwitterLoggedIn();
+    if (this.state.user) this.changeInstructionNumber(5);
   }
 
   checkPopup() {
@@ -230,7 +227,6 @@ class Sequencer extends React.Component {
         this.changeInstructionNumber(6);
       }
     };
-
     this.recorder = recorder;
   }
 
@@ -255,7 +251,6 @@ class Sequencer extends React.Component {
 
   finishRecord() {
     this.recorder.stop();
-    //DO SOMETHING WITH THIS.CHUNKS
     this.chunks = [];
   }
 
@@ -384,16 +379,6 @@ class Sequencer extends React.Component {
     });
   }
 
-  registerTwitterLoggedIn() {
-    if (this.state.instructionNumber === 4) {
-      this.setState({
-        instructionNumber: 5
-      });
-      let instructions = document.getElementById('instruction-text');
-      instructions.innerHTML = "Click record to generate your video";
-    }
-  }
-
   nextBeat() {
     let nextBeat = this.state.currentBeat + 1;
     if (nextBeat > 16) nextBeat = 1;
@@ -435,14 +420,15 @@ class Sequencer extends React.Component {
   }
 
   changeInstructionNumber(num) {
-    this.setState({
-      instructionNumber: num
-    });
+    if (this.state.instructionNumber === num - 1) {
+      this.setState({
+        instructionNumber: num
+      });
+    }
   }
 
   handleInputSubmit(e) {
     e.preventDefault();
-    console.log("sending tweet:", this.state.inputText);
     this.tweetVideo();
     this.setState({
       inputText: "",
@@ -450,16 +436,29 @@ class Sequencer extends React.Component {
     });
   }
 
+  emptyChunks() {
+    this.chunks = [];
+  }
+
   renderGif() {
     if (this.state.instructionNumber === 6) {
       return (
         <div className="text-input-div">
-            <input 
-            className="tweet-text-input" 
-            placeholder="#tweetmybeatz" 
-            text={this.state.inputText} 
-            onUpdate={(e) => this.handleInputUpdate} 
-            onSubmit={(e) => this.handleInputSubmit} />
+          <form className="tweet-form" >
+            <div className="tweet-textarea-div">
+              <textarea
+                maxLength="280"
+                className="tweet-text-input"
+                placeholder="#tweetmybeatz"
+                value={this.state.inputText}
+                onChange={(e) => this.handleInputUpdate(e)}
+              />
+            </div>
+            <div className="form-controls">
+              <button className="tweet-submit-button glowing" type="submit" onClick={(e) => this.handleInputSubmit(e)}><i className="fab fa-twitter small-twitter-icon"/></button>
+              <h5 className="character-limit-text">{280 - this.state.inputText.length} characters remaining</h5>
+            </div>
+          </form>
         </div>
       )
     } else {
@@ -471,10 +470,6 @@ class Sequencer extends React.Component {
     }
   }
 
-  convert() {
-    console.log("this function should take the chunks and process them");
-  }
-        
   render() {
     return (
       <div className="sequencer">
@@ -494,11 +489,11 @@ class Sequencer extends React.Component {
             setGif={this.setGif}
             configureRecorder={this.configureRecorder}
             stopRecord={this.stopRecord}
-            convert={this.convert}
             finishRecord={this.finishRecord}
             instructionNumber={this.state.instructionNumber}
             recordPossible={this.state.recordPossible}
             changeInstructionNumber={this.changeInstructionNumber}
+            emptyChunks={this.emptyChunks}
 
             closeCard={this.closeCard}
             startAuth={this.startAuth}
@@ -522,6 +517,7 @@ class Sequencer extends React.Component {
         activeSamples={this.state.activeSamples}
         instructionNumber={this.state.instructionNumber}
         changeInstructionNumber={this.changeInstructionNumber}
+        playSample={this.playSample}
         />
       </div>
     )

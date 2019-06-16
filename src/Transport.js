@@ -39,6 +39,7 @@ class Transport extends React.Component {
       this.props.setTempo(this.state.tempo);
     }
   }
+
   updateVolume(e) {
     this.setState({
       volume: e.target.value 
@@ -58,14 +59,12 @@ class Transport extends React.Component {
         volume: this.state.oldVolume,
         oldVolume: 0
       }, () => this.props.setVolume(this.state.volume));
-     
     }
   }
 
   toggleProgressBar() {
     let progressBar = document.getElementById('progress-bar-div');
     let progressBarValue = document.getElementById('progress-value');
-
     progressBar.classList.toggle('visible');
     progressBarValue.classList.toggle('progress-value');
   }
@@ -74,7 +73,6 @@ class Transport extends React.Component {
     if (!this.state.recording) {
       this.props.recorder.start();
       if (!this.props.playing) this.props.togglePlay();
-      console.log("recorder started");
       this.setState({
         recording: true
       });
@@ -91,14 +89,13 @@ class Transport extends React.Component {
         this.props.finishRecord();
 
       }, 8000);
-      // Set a timer to call stop recording after 8 seconds, then call convert afterwards depending on if a new variable is true that is set when recording starts and deactivated when recording stops
     } else {
       this.props.recorder.stop();
-      console.log("recorder stopped");
       this.setState({
         recording: false
       });
       this.props.togglePlay();
+      this.props.emptyChunks();
     }
   }
 
@@ -123,7 +120,6 @@ class Transport extends React.Component {
     });
     this.props.stopPlay();
   }
-
 
   renderRecordButton() {
     let classString = "";
@@ -166,7 +162,6 @@ class Transport extends React.Component {
         <i className="fab fa-twitter transport-button inactive-button" />
       )
     }
-      // <span className="TEMP-TWEET-BUTTON" onClick={this.props.closeCard}>Close</span>
   }
 
   render() {
@@ -174,34 +169,26 @@ class Transport extends React.Component {
       if (this.props.playing) {
         return (
           <i className="fas fa-pause transport-button"
-
             onClick={this.props.togglePlay}
             alt="Pause" />
         )
       } else {
-
-        if (this.props.instructionNumber > 1) {
-          return (
-            <i className={this.props.instructionNumber === 2 ? "fas fa-play transport-button glowing" : "fas fa-play transport-button"}
-
-              onClick={this.props.togglePlay}
-              alt="Play" />
-          )
-        } else {
-          return (
-            <i className="fas fa-play transport-button inactive-button"
-
-              
-              alt="Play" />
-        )
-        }
-        
+          if (this.props.instructionNumber > 1) {
+            return (
+              <i className={this.props.instructionNumber === 2 ? "fas fa-play transport-button glowing" : "fas fa-play transport-button"}
+                onClick={this.props.togglePlay}
+                alt="Play" />
+            )
+          } else {
+            return (
+              <i className="fas fa-play transport-button inactive-button" alt="Play" />
+          )} 
       }
-  };
+    };
 
     return (
       <div className="transport">
-        <h1 className="app-title"><i className="fab fa-twitter" />tweet my beats</h1>
+        <h1 className="app-title"><i className="fab fa-twitter" />tweet my beatz</h1>
         <div className="volume-controls">
           <i className={this.state.volume < 5 ? "fas fa-volume-mute mute-button" : "fas fa-volume-up mute-button"} onClick={this.mute}></i>
           <input type="range" min="0" max="100" className="volume-slider" value={this.state.volume} onChange={(e) => { this.updateVolume(e); this.props.setVolume(this.state.volume); }} />
@@ -231,20 +218,18 @@ class Transport extends React.Component {
           <i className="fas fa-bullhorn transport-button" onClick={this.props.airhorn}/>
           {this.renderVideoButton()}
           {this.renderTweetButton()}
-          
           <GiphySearchModal className="giphy-search-modal" toggleModal={this.toggleModal} setGif={this.props.setGif} instructionNumber={this.props.instructionNumber} changeInstructionNumber={this.props.changeInstructionNumber}/>
         </div>
-        <div id="progress-bar-div">
-          <div className="progress-bar">
-            <span id="progress-value" />
+        <div className="outer-progress-bar-div">
+          <div id="progress-bar-div">
+            <div className="progress-bar">
+              <span id="progress-value" />
+            </div>
           </div>
         </div>
-
       </div>
     )
   }
-
-
 }
 
 
