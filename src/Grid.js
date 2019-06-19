@@ -55,12 +55,6 @@ class Grid extends React.Component {
       </div>
     )
   }
-
-
 }
-
-
-
-
 
 export default Grid;

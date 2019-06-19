@@ -11,10 +11,9 @@ import heavySamples from './resources/samples/Heavy/HeavySamples';
 import streetSamples from './resources/samples/Street/StreetSamples';
 
 
-
 import './sequencer.css';
 
-const API_URL = 'http://127.0.0.1:5000';
+const API_URL = '/';
 const socket = io(API_URL);
 
 const kits = {
@@ -238,7 +237,7 @@ class Sequencer extends React.Component {
     data.set('handle', this.state.user.name);
     data.set('text', this.state.inputText);
 
-    Axios.post('http://127.0.0.1:5000/video', data).then(function (response) {
+    Axios.post('/video', data).then(function (response) {
     }).catch(function (error) {
       throw (error);
     });

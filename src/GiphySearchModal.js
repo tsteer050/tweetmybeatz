@@ -50,10 +50,8 @@ class GiphySearchModal extends React.Component {
         set(response.config.url);
       })
       .catch(function (error) {
-        // handle error
         console.log(error);
-      })
-    // this.props.setGif(url);
+      });
     if (this.props.instructionNumber === 3) {
       this.props.changeInstructionNumber(4);
     }

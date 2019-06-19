@@ -31,11 +31,15 @@ class Gridrow extends React.Component {
     return (this.props.activeSamples[this.props.currentBeat].includes(this.props.sample)) && this.props.playing;
   }
 
+  testSample(sample) {
+    this.props.playSample(this.props.sample)
+  }
+
   render() {
     return (
       <div>
         <div className="grid-row">
-          <button className="grid-row-sample-button" onClick={() => this.props.playSample(this.props.sample)}>{this.props.sample}</button>
+          <button className="grid-row-sample-button" onClick={() => this.testSample(this.props.sample)}>{this.props.sample}</button>
           <div className={this.checkMeter() ? "meter meter-active" : "meter meter-off"}/>
           <div className="grid-row-buttons">
             {this.renderButtons()}
@@ -45,6 +49,5 @@ class Gridrow extends React.Component {
     )
   }
 }
-
 
 export default Gridrow;
