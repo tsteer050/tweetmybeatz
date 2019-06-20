@@ -33,7 +33,7 @@ const TWITTER_CONFIG = {
 
 // Create the server and allow express and sockets to run on the same port
 const app = express();
-const server = http.createServer(app);
+const server = http.Server(app);
 const io = socketio(server);
 
 

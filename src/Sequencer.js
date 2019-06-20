@@ -1,7 +1,7 @@
 import React from 'react';
 import Grid from './Grid';
 import Transport from './Transport';
-import io from 'socket.io-client';
+// import io from 'socket.io-client';
 import Axios from 'axios';
 
 import defaultSamples from './resources/samples/DefaultSamples';
@@ -14,8 +14,9 @@ import streetSamples from './resources/samples/Street/StreetSamples';
 
 import './sequencer.css';
 
-const API_URL = process.env.NODE_ENV === 'production' ? 'tweetmybeatz.herokuapp.com:443' :'http://127.0.0.1:5000';
-const socket = io(API_URL);
+const API_URL = process.env.NODE_ENV === 'production' ? '' :'http://127.0.0.1:5000';
+// const socket = io(API_URL);
+const io = window.io;
 
 const kits = {
   "Default": defaultSamples,
@@ -114,7 +115,9 @@ class Sequencer extends React.Component {
 
  
   componentDidMount() {
-    socket.on('user', user => {
+    this.socket = io.connect(process.env.NODE_ENV === 'production' ? 'https://tweetmybeatz.herokuapp.com' : 'http://127.0.0.1:5000');
+
+    this.socket.on('user', user => {
       this.popup.close();
       this.setState({ user });
     });
@@ -185,7 +188,7 @@ class Sequencer extends React.Component {
     const left = (window.innerWidth / 2) - (width / 2);
     const top = (window.innerHeight / 2) - (height / 2);
 
-    const url = `${API_URL}/twitter?socketId=${socket.id}`;
+    const url = `${API_URL}/twitter?socketId=${this.socket.id}`;
 
     return window.open(url, '',
       `toolbar=no, location=no, directories=no, status=no, menubar=no, 
