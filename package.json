@@ -28,12 +28,14 @@
     "twit": "^2.2.11"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install && npm run build",
+    "start": "node index.js",
+    "client": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "server": "node index.js",
-    "dev": "concurrently \"npm run server\" \"npm run start\""
+    "dev": "concurrently \"npm run server\" \"npm run client\""
   },
   "proxy": "http://127.0.0.1:5000",
   "eslintConfig": {

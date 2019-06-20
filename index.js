@@ -21,11 +21,11 @@ const Twit = require('Twit');
 // Private api keys that you will get when registering an app on 
 // apps.twitter.com
 const TWITTER_CONFIG = {
-  consumerKey: '6cyqAYryuNVrzDqj3kuJVZKo8',
-  consumerSecret: 'RoBVScAziZEFLrF6duDaI6Hmo4O2MqfYXZ89FZ6KEHe3yciuZm',
+  consumerKey: TWITTER_CREDS.consumerKey,
+  consumerSecret: TWITTER_CREDS.consumerSecret,
   // make sure the call back url matches what was set on Twitter
   // when registering the app
-  callbackURL: 'http://127.0.0.1:5000/twitter/callback'
+  callbackURL: TWITTER_CREDS.callbackURL
 };
 
 
@@ -223,6 +223,13 @@ app.get('/gif', (req, res) => {
   
 });
 
-server.listen(5000, () => console.log('listening on port 5000'));
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static('build'));
+  app.get('/', (req, res) => {
+    res.sendFile(path.resolve(__dirname, 'build', 'index.html'));
+  });
+}
+
+server.listen(process.env.PORT || 5000, () => console.log('listening on port 5000'));
 
 // http://localhost:5000/twitter?socketId=XdOCKJvgO0vQhwCOAAAL
