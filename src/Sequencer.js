@@ -120,6 +120,8 @@ class Sequencer extends React.Component {
     this.socket.on('user', user => {
       this.popup.close();
       this.setState({ user });
+
+      this.socket.on('connection', message => console.log(message))
     });
     try {
       window.AudioContext = window.AudioContext || window.webkitAudioContext;
