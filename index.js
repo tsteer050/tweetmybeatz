@@ -37,6 +37,8 @@ const server = http.Server(app);
 const io = socketio(server);
 
 
+
+
 let originUrl = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:3000';
 io.origins([originUrl, 'https://tweetmybeatz.herokuapp.com', '/']);
 // Allows the application to accept JSON and use passport
@@ -62,6 +64,8 @@ app.use(session({
   resave: true,
   saveUninitialized: true
 }));
+
+
 
 // allows us to save the user into the session
 passport.serializeUser((user, cb) => cb(null, user))
@@ -94,6 +98,10 @@ const addSocketIdToSession = (req, res, next) => {
   req.session.socketId = req.query.socketId;
   next();
 };
+
+io.on('connection', socket => {
+  socket.emit('connection', 'connection successful');
+});
 
 // This is endpoint triggered by the popup on the client which starts the whole
 // authentication process
