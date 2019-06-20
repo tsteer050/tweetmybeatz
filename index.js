@@ -15,7 +15,7 @@ const fs = require('fs');
 const TWITTER_CREDS = require('./config.js').TWITTER_CONFIG;
 const Axios = require('axios');
 
-const Twit = require('Twit');
+const Twit = require('twit');
 
 
 // Private api keys that you will get when registering an app on 
