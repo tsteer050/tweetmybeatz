@@ -37,7 +37,7 @@ const server = http.createServer(app);
 const io = socketio(server);
 
 
-let originUrl = process.env.NODE_ENV === 'production' ? 'https://tweetmybeatz.herokuapp.com' : 'http://localhost:3000';
+let originUrl = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:3000';
 io.origins([originUrl]);
 // Allows the application to accept JSON and use passport
 app.use(express.json());
