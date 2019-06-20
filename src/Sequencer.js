@@ -14,7 +14,7 @@ import streetSamples from './resources/samples/Street/StreetSamples';
 
 import './sequencer.css';
 
-const API_URL = process.env.NODE_ENV === 'production' ? '' :'http://127.0.0.1:5000';
+const API_URL = process.env.NODE_ENV === 'production' ? 'tweetmybeatz.herokuapp.com:443' :'http://127.0.0.1:5000';
 const socket = io(API_URL);
 
 const kits = {
