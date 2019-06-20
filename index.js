@@ -38,9 +38,10 @@ const io = socketio(server);
 
 
 
-
-let originUrl = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:3000';
-io.origins([originUrl, 'https://tweetmybeatz.herokuapp.com', '/']);
+if (process.env.NODE_ENV !== 'production') {
+  let originUrl = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:3000';
+  io.origins([originUrl, 'https://tweetmybeatz.herokuapp.com', '/']);
+}
 // Allows the application to accept JSON and use passport
 app.use(express.json());
 app.use(passport.initialize());
@@ -52,9 +53,12 @@ let formidable = formidableMiddleware();
 
 // Set up cors to allow us to accept requests from our client
 
-app.use(cors({
-  origin: originUrl
-})); 
+if (process.env.NODE_ENV !== 'production') {
+  app.use(cors({
+    origin: originUrl
+  })); 
+}
+
 
 
 // saveUninitialized: true allows us to attach the socket id
