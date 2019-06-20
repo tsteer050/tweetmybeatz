@@ -37,7 +37,7 @@
     "server": "node index.js",
     "dev": "concurrently \"npm run server\" \"npm run client\""
   },
-
+  "proxy": "http://127.0.0.1:5000",
   "eslintConfig": {
     "extends": "react-app"
   },
