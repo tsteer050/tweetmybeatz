@@ -36,7 +36,9 @@ const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
 
-io.origins(['http://localhost:3000']);
+
+let originUrl = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:3000';
+io.origins([originUrl]);
 // Allows the application to accept JSON and use passport
 app.use(express.json());
 app.use(passport.initialize());
@@ -47,8 +49,9 @@ let formidable = formidableMiddleware();
 // app.use(bodyParser.urlencoded({extended: true}));
 
 // Set up cors to allow us to accept requests from our client
+
 app.use(cors({
-  origin: 'http://localhost:3000'
+  origin: originUrl
 })); 
 
 
@@ -231,5 +234,3 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 server.listen(process.env.PORT || 5000, () => console.log('listening on port 5000'));
-
-// http://localhost:5000/twitter?socketId=XdOCKJvgO0vQhwCOAAAL
