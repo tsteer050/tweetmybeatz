@@ -27,7 +27,7 @@
     "twit": "^2.2.11"
   },
   "scripts": {
-    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install && npm run build  && sudo add-apt-repository --yes ppa:stebbins/handbrake-releases && sudo apt-get update -qq && sudo apt-get install -qq handbrake-cli",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install && npm run build  && add-apt-repository --yes ppa:stebbins/handbrake-releases && apt-get update -qq && apt-get install -qq handbrake-cli",
     "start": "node index.js",
     "client": "react-scripts start",
     "build": "react-scripts build",
