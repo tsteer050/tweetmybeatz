@@ -1,3 +1,4 @@
-add-apt-repository ppa:stebbins/handbrake-releases
+deb http://ppa.launchpad.net/stebbins/handbrake-releases/ubuntu bionic main 
+deb-src http://ppa.launchpad.net/stebbins/handbrake-releases/ubuntu bionic main 
 update -qq
 install handbrake-cli
