@@ -1,2 +1,3 @@
-:repo:ppa:stebbins/handbrake-releases
-handbrake-cli
+:key:1024R/43D3A9F60C58A7169778E6FB8771ADB0816950D8
+:repo:deb http://ppa.launchpad.net/stebbins/handbrake-releases/ubuntu bionic main 
+:repo:deb-src http://ppa.launchpad.net/stebbins/handbrake-releases/ubuntu bionic main
