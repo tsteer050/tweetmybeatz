@@ -231,7 +231,7 @@ app.get('/gif', (req, res) => {
   const url = req.query.url;
   downloader.get(url, 'gifs');
   let subdir = '/';
-  if (process.env.NODE_ENV === 'production') subdir = '/tmp/';
+  // if (process.env.NODE_ENV === 'production') subdir = '/tmp/';
   
   downloader.on('done', filename => {
     console.log(filename);
