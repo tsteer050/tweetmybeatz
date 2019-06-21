@@ -219,7 +219,7 @@ class Sequencer extends React.Component {
     let audioTrack = this.audioDestination.stream.getAudioTracks()[0];
 
     let combined = new MediaStream([videoTrack, audioTrack]);
-    var options = { mimeType: 'video/webm;codecs=h264' }; 
+    var options = { mimeType: 'video/mp4' }; 
     let recorder = new MediaRecorder(combined, options);
 
     recorder.ondataavailable = (e) => {
