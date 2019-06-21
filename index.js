@@ -41,6 +41,9 @@ const io = socketio(server);
 if (process.env.NODE_ENV !== 'production') {
   let originUrl = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:3000';
   io.origins([originUrl, 'https://tweetmybeatz.herokuapp.com', '/']);
+  app.use(cors({
+    origin: originUrl
+  })); 
 }
 // Allows the application to accept JSON and use passport
 app.use(express.json());
@@ -53,11 +56,9 @@ let formidable = formidableMiddleware();
 
 // Set up cors to allow us to accept requests from our client
 
-if (process.env.NODE_ENV !== 'production') {
-  app.use(cors({
-    origin: originUrl
-  })); 
-}
+// if (process.env.NODE_ENV !== 'production') {
+
+// }
 
 
 
