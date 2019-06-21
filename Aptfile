@@ -1,5 +1,2 @@
-add-apt-repository --yes ppa:stebbins/handbrake-releases
-apt-get update -qq
-apt-get install -qq handbrake-cli
-
-https://flathub.org/repo/appstream/fr.handbrake.ghb.flatpakref
+:repo:deb http://ppa.launchpad.net/stebbins/handbrake-releases/ubuntu bionic main 
+:repo:deb-src http://ppa.launchpad.net/stebbins/handbrake-releases/ubuntu bionic main 
