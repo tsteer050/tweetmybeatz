@@ -1,2 +1,2 @@
-:repo:deb http://ppa.launchpad.net/stebbins/handbrake-releases/ubuntu bionic main 
-:repo:deb-src http://ppa.launchpad.net/stebbins/handbrake-releases/ubuntu bionic main 
+:repo:ppa:stebbins/handbrake-releases
+handbrake-cli
