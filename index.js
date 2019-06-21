@@ -218,7 +218,7 @@ app.post('/video', formidable, (req, res) => {
       );
       
     }).on('complete', () => {
-
+      console.log("CALLING TWIT POST");
 
       
       _twitterVideoPub(myTweetObj, () => console.log("resolved"));
