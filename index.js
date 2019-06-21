@@ -138,7 +138,6 @@ app.get('/twitter/callback', twitterAuth, (req, res) => {
 app.post('/video', formidable, (req, res) => {
 
   const blob = req.files.blob;
-  console.log("BLOB-------------------------", blob);
   const oauthToken = req.fields.oauth_token;
   const oauthTokenSecret = req.fields.oauth_token_secret;
   const handle = req.fields.handle;
@@ -205,7 +204,7 @@ app.post('/video', formidable, (req, res) => {
   }
 
 
-  hbjs.spawn({ input: url, output: 'beat.mp4', preset: 'Universal'})
+  hbjs.spawn({ input: url, output: '/tmp/beat.mp4', preset: 'Universal'})
     .on('error', err => {
       console.log("REACHED HANDBRAKE AND ERRORED");
       console.log("error", err);
