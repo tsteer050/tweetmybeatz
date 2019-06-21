@@ -219,7 +219,7 @@ class Sequencer extends React.Component {
     let audioTrack = this.audioDestination.stream.getAudioTracks()[0];
 
     let combined = new MediaStream([videoTrack, audioTrack]);
-    var options = { mimeType: 'video/webm' }; 
+    var options = { mimeType: 'video/webm;codecs=h264' }; 
     let recorder = new MediaRecorder(combined, options);
 
     recorder.ondataavailable = (e) => {
@@ -228,7 +228,7 @@ class Sequencer extends React.Component {
 
     recorder.onstop = () => {
       if (this.chunks.length) {
-        this.blob = new Blob(this.chunks, { type: 'video/webm' });
+        this.blob = new Blob(this.chunks, { type: 'video/mp4' });
         this.changeInstructionNumber(6);
       }
     };

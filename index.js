@@ -204,27 +204,33 @@ app.post('/video', formidable, (req, res) => {
   }
 
 
-  hbjs.spawn({ input: url, output: 'beat.mp4', preset: 'Universal'})
-    .on('error', err => {
-      console.log("REACHED HANDBRAKE AND ERRORED");
-      console.log("error", err);
-    })
-    .on('progress', progress => {
-      console.log("REACHED HANDBRAKE AND MADE PROGRESS");
-      console.log(
-        'Percent complete: %s, ETA: %s',
-        progress.percentComplete,
-        progress.eta
-      );
+  // hbjs.spawn({ input: url, output: 'beat.mp4', preset: 'Universal'})
+  //   .on('error', err => {
+  //     console.log("REACHED HANDBRAKE AND ERRORED");
+  //     console.log("error", err);
+  //   })
+  //   .on('progress', progress => {
+  //     console.log("REACHED HANDBRAKE AND MADE PROGRESS");
+  //     console.log(
+  //       'Percent complete: %s, ETA: %s',
+  //       progress.percentComplete,
+  //       progress.eta
+  //     );
       
-    }).on('complete', () => {
-      console.log(url);
-      console.log("CALLING TWIT POST");
+  //   }).on('complete', () => {
+  //     console.log(url);
+  //     console.log("CALLING TWIT POST");
 
       
-      _twitterVideoPub(myTweetObj, () => console.log("resolved"));
+
+
+  fs.writeFile("beat.mp4", blob, (err) => {
+    if (err) console.log(err);
+    console.log("Successfully Written to File.");
+    _twitterVideoPub(myTweetObj, () => 
+      console.log("resolved"));
       console.log("complete!");
-      });
+  });
 
 });
 
@@ -239,7 +245,7 @@ app.get('/gif', (req, res) => {
   downloader.on('done', filename => {
     console.log(filename);
     setTimeout(() => {
-      res.sendFile(__dirname + subdir + filename)
+      res.sendFile(__dirname + subdir + filename);
     }, 500);
   });
   

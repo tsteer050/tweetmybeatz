@@ -27,7 +27,7 @@
     "twit": "^2.2.11"
   },
   "scripts": {
-    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install && npm run build && flatpak --user install https://flathub.org/repo/appstream/fr.handbrake.ghb.flatpakref",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install && npm run build",
     "start": "node index.js",
     "client": "react-scripts start",
     "build": "react-scripts build",
