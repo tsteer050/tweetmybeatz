@@ -159,8 +159,9 @@ app.post('/video', formidable, (req, res) => {
       access_token: oauthToken,
       access_token_secret: oauthTokenSecret
     });
-
-    const PATH = path.join(__dirname, `beat.mp4`);
+    let subdir = '';
+    if (proccess.env.NODE_ENV === 'production') subdir = 'tmp/';
+    const PATH = path.join(__dirname, subdir, `beat.mp4`);
 
     T.postMediaChunked({ file_path: PATH }, function (err, data, response) {
 
@@ -229,11 +230,13 @@ app.get('/gif', (req, res) => {
   const downloader = new urlDownload();
   const url = req.query.url;
   downloader.get(url, 'gifs');
+  let subdir = '/';
+  if (process.env.NODE_ENV === 'production') subdir = '/tmp/';
   
   downloader.on('done', filename => {
     console.log(filename);
     setTimeout(() => {
-      res.sendFile(__dirname + '/' + filename)
+      res.sendFile(__dirname + subdir + filename)
     }, 500);
   });
   
