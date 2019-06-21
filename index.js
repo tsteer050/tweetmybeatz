@@ -160,7 +160,7 @@ app.post('/video', formidable, (req, res) => {
       access_token_secret: oauthTokenSecret
     });
     let subdir = '';
-    if (process.env.NODE_ENV === 'production') subdir = 'tmp/';
+    // if (process.env.NODE_ENV === 'production') subdir = 'tmp/';
     const PATH = path.join(__dirname, subdir, `beat.mp4`);
 
     T.postMediaChunked({ file_path: PATH }, function (err, data, response) {
