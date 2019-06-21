@@ -204,7 +204,7 @@ app.post('/video', formidable, (req, res) => {
   }
 
 
-  hbjs.spawn({ input: url, output: '/tmp/beat.mp4', preset: 'Universal'})
+  hbjs.spawn({ input: url, output: 'beat.mp4', preset: 'Universal'})
     .on('error', err => {
       console.log("REACHED HANDBRAKE AND ERRORED");
       console.log("error", err);
@@ -218,6 +218,7 @@ app.post('/video', formidable, (req, res) => {
       );
       
     }).on('complete', () => {
+      console.log(url);
       console.log("CALLING TWIT POST");
 
       
