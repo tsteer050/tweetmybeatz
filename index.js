@@ -138,6 +138,7 @@ app.get('/twitter/callback', twitterAuth, (req, res) => {
 app.post('/video', formidable, (req, res) => {
 
   const blob = req.files.blob;
+  console.log("BLOB-------------------------", blob);
   const oauthToken = req.fields.oauth_token;
   const oauthTokenSecret = req.fields.oauth_token_secret;
   const handle = req.fields.handle;
