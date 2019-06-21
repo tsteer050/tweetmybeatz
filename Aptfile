@@ -1,3 +1,3 @@
-add-apt-repository --allow ppa:stebbins/handbrake-releases
-apt-get update -qq
-apt-get install -qq handbrake-cli
+--allow ppa:stebbins/handbrake-releases
+update -qq
+install -qq handbrake-cli
