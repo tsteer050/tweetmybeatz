@@ -14,6 +14,7 @@ const path = require('path');
 const fs = require('fs');
 const TWITTER_CREDS = require('./config.js').TWITTER_CONFIG;
 const Axios = require('axios');
+var ffmpeg = require('fluent-ffmpeg');
 
 const Twit = require('twit');
 
@@ -142,6 +143,7 @@ app.post('/video', formidable, (req, res) => {
   const oauthTokenSecret = req.fields.oauth_token_secret;
   const handle = req.fields.handle;
   const tweetText = req.fields.text;
+  console.log ("BLOB:", blob);
   let url = blob.path;
 
   const myTweetObj = {
@@ -159,9 +161,7 @@ app.post('/video', formidable, (req, res) => {
       access_token: oauthToken,
       access_token_secret: oauthTokenSecret
     });
-    let subdir = '';
-    // if (process.env.NODE_ENV === 'production') subdir = 'tmp/';
-    const PATH = path.join(__dirname, subdir, `beat.mp4`);
+    const PATH = path.join(__dirname, `beat.mp4`);
 
     T.postMediaChunked({ file_path: PATH }, function (err, data, response) {
 
@@ -193,38 +193,44 @@ app.post('/video', formidable, (req, res) => {
         // Axios.get(`https://api.twitter.com/1.1/media/upload?command=STATUS&media_id=${mediaIdStr}`).then(response => {
         //   console.log(response);
         // });
-        
       }, 1000);
-
-
-
-      
-
     }); // end T.postMedisChunked
   }
 
-
-  hbjs.spawn({ input: url, output: 'beat.mp4', preset: 'Universal'})
-    .on('error', err => {
-      console.log("REACHED HANDBRAKE AND ERRORED");
-      console.log("error", err);
+  ffmpeg(url)
+    .toFormat('mp4')
+    .on('progress', function (progress) {
+      console.log('Processing: ' + progress.percent + '% done');
     })
-    .on('progress', progress => {
-      console.log("REACHED HANDBRAKE AND MADE PROGRESS");
-      console.log(
-        'Percent complete: %s, ETA: %s',
-        progress.percentComplete,
-        progress.eta
-      );
+    .on('end', function (err) {
+      console.log('done!');
+      setTimeout(() => _twitterVideoPub(myTweetObj, () => console.log("resolved")), 2000);
+      console.log("complete!");
+    })
+    .on('error', function (err) {
+      console.log('an error happened: ' + err.message);
+    })
+    .save('beat.mp4');
+
+  // hbjs.spawn({ input: url, output: 'beat.mp4', preset: 'Universal'})
+  //   .on('error', err => {
+  //     console.log("REACHED HANDBRAKE AND ERRORED");
+  //     console.log("error", err);
+  //   })
+  //   .on('progress', progress => {
+  //     console.log("REACHED HANDBRAKE AND MADE PROGRESS");
+  //     console.log(
+  //       'Percent complete: %s, ETA: %s',
+  //       progress.percentComplete,
+  //       progress.eta
+  //     );
       
-    }).on('complete', () => {
-      console.log(url);
-      console.log("CALLING TWIT POST");
+  //   }).on('complete', () => {
+  //     console.log(url);
+  //     console.log("CALLING TWIT POST");
 
       
-      _twitterVideoPub(myTweetObj, () => console.log("resolved"));
-      console.log("complete!");
-      });
+
 
 });
 

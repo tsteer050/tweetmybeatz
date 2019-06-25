@@ -13,6 +13,7 @@
     "express-session": "^1.16.2",
     "ffmpeg": "0.0.4",
     "file-saver": "^2.0.2",
+    "fluent-ffmpeg": "^2.1.2",
     "giphy-js-sdk-core": "^1.0.6",
     "handbrake-js": "^3.0.8",
     "node-url-downloader": "^0.1.9",
@@ -36,7 +37,6 @@
     "server": "node index.js",
     "dev": "concurrently \"npm run server\" \"npm run client\""
   },
-
   "eslintConfig": {
     "extends": "react-app"
   },

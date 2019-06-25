@@ -243,6 +243,7 @@ class Sequencer extends React.Component {
     data.set('handle', this.state.user.name);
     data.set('text', this.state.inputText);
     let requestUrl = API_URL + '/video';
+    console.log(this.blob);
 
     Axios.post(requestUrl, data).then(function (response) {
     }).catch(function (error) {
