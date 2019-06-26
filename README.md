@@ -4,3 +4,4 @@ TweetMyBeatz is a web-app built using Node.js, Express, and React.  Its main fea
 
 Other features include a modal linked to the Giphy API to select a gif to pair with your beat, a record function which uses the Media Recorder API to combine both your beat and the chosen gif into a single mp4, and integration of Twitter OAuth which allows you to post your finished video to your Twitter account.
 
+![Screenshot](https://octodex.github.com/images/yaktocat.png)
