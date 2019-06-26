@@ -4,7 +4,6 @@
   "private": true,
   "dependencies": {
     "axios": "^0.19.0",
-    "body-parser": "^1.19.0",
     "concurrently": "^4.1.0",
     "cors": "^2.8.5",
     "dotenv": "^8.0.0",
@@ -15,7 +14,6 @@
     "file-saver": "^2.0.2",
     "fluent-ffmpeg": "^2.1.2",
     "giphy-js-sdk-core": "^1.0.6",
-    "handbrake-js": "^3.0.8",
     "node-url-downloader": "^0.1.9",
     "passport": "^0.4.0",
     "passport-twitter": "^1.0.4",

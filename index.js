@@ -1,7 +1,5 @@
 const express = require('express');
 const urlDownload = require('node-url-downloader');
-const bodyParser = require('body-parser');
-
 const http = require('http');
 const passport = require('passport');
 const session = require('express-session');
@@ -9,13 +7,9 @@ const cors = require('cors');
 const socketio = require('socket.io');
 const { Strategy: TwitterStrategy } = require('passport-twitter');
 const formidableMiddleware = require('express-formidable');
-const hbjs = require('handbrake-js');
 const path = require('path');
-const fs = require('fs');
 const TWITTER_CREDS = require('./config.js').TWITTER_CONFIG;
-const Axios = require('axios');
 var ffmpeg = require('fluent-ffmpeg');
-
 const Twit = require('twit');
 
 const TWITTER_CONFIG = {
@@ -162,7 +156,6 @@ app.get('/gif', (req, res) => {
       res.sendFile(__dirname + subdir + filename)
     }, 500);
   });
-  
 });
 
 if (process.env.NODE_ENV === 'production') {
