@@ -24,3 +24,4 @@ yarn-error.log*
 
 keys_dev.js
 dockerfile
+Dockerfile
