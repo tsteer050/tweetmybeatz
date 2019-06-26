@@ -4,6 +4,12 @@ import './grid.css';
 
 class Gridrow extends React.Component {
 
+  checkMeter() {
+    if (this.props.currentBeat === 0) return false;
+
+    return (this.props.activeSamples[this.props.currentBeat].includes(this.props.sample)) && this.props.playing;
+  }
+
   renderButtons() {
     let array = [];
     for (let i = 1; i < 17; i++) {
@@ -25,12 +31,6 @@ class Gridrow extends React.Component {
     });
   }
 
-  checkMeter() {
-    if (this.props.currentBeat === 0) return false;
-
-    return (this.props.activeSamples[this.props.currentBeat].includes(this.props.sample)) && this.props.playing;
-  }
-
   render() {
     return (
       <div>
@@ -45,6 +45,5 @@ class Gridrow extends React.Component {
     )
   }
 }
-
 
 export default Gridrow;

@@ -1,7 +1,6 @@
 import React from 'react';
 import Grid from './Grid';
 import Transport from './Transport';
-// import io from 'socket.io-client';
 import Axios from 'axios';
 
 import defaultSamples from './resources/samples/DefaultSamples';
@@ -10,12 +9,9 @@ import electroSamples from './resources/samples/Electro/ElectroSamples';
 import heavySamples from './resources/samples/Heavy/HeavySamples';
 import streetSamples from './resources/samples/Street/StreetSamples';
 
-
-
 import './sequencer.css';
 
 const API_URL = process.env.NODE_ENV === 'production' ? '' :'http://127.0.0.1:5000';
-// const socket = io(API_URL);
 const io = window.io;
 
 const kits = {
@@ -160,7 +156,6 @@ class Sequencer extends React.Component {
       samples: newSamples
     });
     
-
     navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
         this.microphone = this.audioContext.createMediaStreamSource(stream);
         this.micGainNode = this.audioContext.createGain();
@@ -170,11 +165,41 @@ class Sequencer extends React.Component {
       });
   }
 
-  componentDidUpdate() {
-    this.play();
-    if (this.state.user) this.changeInstructionNumber(5);
+  addActiveSample(sample, beat) {
+    let newActiveSamples = this.state.activeSamples;
+    newActiveSamples[beat].push(sample);
+    this.setState({
+      activeSamples: newActiveSamples
+    });
   }
 
+  airhorn() {
+    let resetSample = this.state.samples;
+    resetSample["Airhorn"].currentTime = 0;
+    this.setState({
+      samples: resetSample
+    });
+    this.state.samples["Airhorn"].play();
+  }
+
+  changeInstructionNumber(num) {
+    if (this.state.instructionNumber === num - 1) {
+      this.setState({
+        instructionNumber: num
+      });
+    }
+  }
+
+  changeKit(kit) {
+    let newSamples = this.state.samples;
+    samples.forEach(key => {
+      newSamples[key].src = kits[kit][key];
+    });
+    this.setState({
+      samples: newSamples
+    });
+  }
+  
   checkPopup() {
     const check = setInterval(() => {
       const { popup } = this
@@ -183,6 +208,80 @@ class Sequencer extends React.Component {
         this.setState({ disabled: '' });
       }
     }, 1000);
+  }
+
+  closeCard() {
+    this.setState({ user: {} });
+  }
+
+  componentDidUpdate() {
+    this.play();
+    if (this.state.user) this.changeInstructionNumber(5);
+  }
+
+  configureRecorder() {
+
+    let video = document.getElementById("video");
+    let videoTrack = video.captureStream().getVideoTracks()[0];
+    let audioTrack = this.audioDestination.stream.getAudioTracks()[0];
+
+    let combined = new MediaStream([videoTrack, audioTrack]);
+    var options = { mimeType: 'video/webm' };
+    let recorder = new MediaRecorder(combined, options);
+
+    recorder.ondataavailable = (e) => {
+      this.chunks.push(e.data);
+    };
+
+    recorder.onstop = () => {
+      if (this.chunks.length) {
+        this.blob = new Blob(this.chunks, { type: 'video/webm' });
+        this.changeInstructionNumber(6);
+      }
+    };
+    this.recorder = recorder;
+  }
+
+  emptyChunks() {
+    this.chunks = [];
+  }
+
+  finishRecord() {
+    this.recorder.stop();
+    this.chunks = [];
+  }
+
+  handleInputSubmit(e) {
+    e.preventDefault();
+    this.tweetVideo();
+    this.setState({
+      inputText: "",
+      instructionNumber: 7
+    });
+  }
+
+  handleInputUpdate(e) {
+    if (e.target.value.length <= 240) {
+      this.setState({
+        inputText: e.target.value
+      });
+    }
+  }
+
+  incrementBeat() {
+    let beat = this.state.currentBeat + 1;
+    if (beat > 16) beat = 1;
+    this.setState({
+      currentBeat: beat
+    });
+  }
+
+  nextBeat() {
+    let nextBeat = this.state.currentBeat + 1;
+    if (nextBeat > 16) nextBeat = 1;
+    this.setState({
+      currentBeat: nextBeat
+    });
   }
 
   openPopup() {
@@ -199,67 +298,50 @@ class Sequencer extends React.Component {
     );
   }
 
-  startAuth() {
-    if (!this.state.disabled) {
-      this.popup = this.openPopup();
-      this.checkPopup();
-      this.setState({ disabled: 'disabled' });
+  play() {
+    if (!this.state.timerInProgress) {
+      this.setState({
+        timerInProgress: true
+      });
+      var bpm = this.state.tempo;
+      var interval = ((60 / bpm) / 4) * 1000;
+      setTimeout(() => {
+        if (this.state.playing) {
+          this.incrementBeat();
+          this.setState({
+            timerInProgress: false
+          });
+          this.state.activeSamples[this.state.currentBeat].forEach(sample => {
+            this.playSample(sample);
+          });
+          this.play();
+        }
+
+      }, interval);
     }
   }
 
-  closeCard() {
-    this.setState({ user: {} });
+  playSample(sample) {
+    let resetSample = this.state.samples;
+    resetSample[sample].currentTime = 0;
+    this.setState({
+      samples: resetSample
+    });
+    this.state.samples[sample].play();
   }
 
-
-  configureRecorder() {
-
-    let video = document.getElementById("video");
-    let videoTrack = video.captureStream().getVideoTracks()[0];
-    let audioTrack = this.audioDestination.stream.getAudioTracks()[0];
-
-    let combined = new MediaStream([videoTrack, audioTrack]);
-    var options = { mimeType: 'video/webm' }; 
-    let recorder = new MediaRecorder(combined, options);
-
-    recorder.ondataavailable = (e) => {
-      this.chunks.push(e.data);
-    };
-
-    recorder.onstop = () => {
-      if (this.chunks.length) {
-        this.blob = new Blob(this.chunks, { type: 'video/webm' });
-        this.changeInstructionNumber(6);
-      }
-    };
-    this.recorder = recorder;
-  }
-
-  tweetVideo() {
-    let data = new FormData();
-    data.set('blob', this.blob);
-    data.set('oauth_token', this.state.user.token);
-    data.set('oauth_token_secret', this.state.user.tokenSecret);
-    data.set('handle', this.state.user.name);
-    data.set('text', this.state.inputText);
-    let requestUrl = API_URL + '/video';
-    console.log(this.blob);
-
-    Axios.post(requestUrl, data).then(function (response) {
-    }).catch(function (error) {
-      throw (error);
+  removeActiveSample(sample, beat) {
+    let newActiveSamples = this.state.activeSamples;
+    if (newActiveSamples[beat].length === 1) {
+      newActiveSamples[beat] = [];
+    } else {
+      newActiveSamples[beat] = newActiveSamples[beat].filter(activeSample => activeSample !== sample);
+    }
+    this.setState({
+      activeSamples: newActiveSamples
     });
   }
 
-  stopRecord() {
-    this.recorder.stop();
-    this.chunks = [];
-  }
-
-  finishRecord() {
-    this.recorder.stop();
-    this.chunks = [];
-  }
 
   setGif(gif) {
     this.setState({
@@ -281,81 +363,47 @@ class Sequencer extends React.Component {
       video.addEventListener('loadeddata', this.listener);
       video.load();
     });
+  }
 
+  setTempo(newTempo) {
+    this.setState({
+      tempo: newTempo
+    });
+  }
+
+
+  setVolume(vol) {
+    let newVolume = vol;
+    if (newVolume < 5) newVolume = 0;
+    this.setState({
+      volume: newVolume
+    });
+    this.gainNode.gain.value = newVolume / 100;
+  }
+
+  startAuth() {
+    if (!this.state.disabled) {
+      this.popup = this.openPopup();
+      this.checkPopup();
+      this.setState({ disabled: 'disabled' });
+    }
+  }
+
+  stopPlay() {
+    this.setState({
+      playing: false,
+      currentBeat: 0,
+      timerInProgress: false
+    });
+  }
+
+  stopRecord() {
+    this.recorder.stop();
+    this.chunks = [];
   }
 
   toggleMic() {
     this.micGainNode.gain.value === 0 ? this.micGainNode.gain.value = 1 : this.micGainNode.gain.value = 0;
-  }
-
-  addActiveSample(sample, beat) {
-    let newActiveSamples = this.state.activeSamples;
-    newActiveSamples[beat].push(sample);
-    this.setState({
-      activeSamples: newActiveSamples
-    });
-  }
-
-  removeActiveSample(sample, beat) {
-    let newActiveSamples = this.state.activeSamples;
-    if (newActiveSamples[beat].length === 1) {
-      newActiveSamples[beat] = [];
-    } else {
-      newActiveSamples[beat] = newActiveSamples[beat].filter(activeSample => activeSample !== sample);
-    }
-    this.setState({
-      activeSamples: newActiveSamples
-    });
-  }
-
-  changeKit(kit) {
-    let newSamples = this.state.samples;
-    samples.forEach(key => {
-      newSamples[key].src = kits[kit][key];
-    });
-    this.setState({
-      samples: newSamples
-    });
-  }
-
-  incrementBeat() {
-    let beat = this.state.currentBeat + 1;
-    if (beat > 16) beat = 1;
-    this.setState({
-      currentBeat: beat
-    });
-  }
-
-  play() {
-    if (!this.state.timerInProgress) {
-      this.setState({
-        timerInProgress: true
-      });
-      var bpm = this.state.tempo;
-      var interval = ((60 / bpm) / 4) * 1000;
-      setTimeout(() => {
-        if (this.state.playing) {
-          this.incrementBeat();
-          this.setState({
-            timerInProgress: false
-          });
-          this.state.activeSamples[this.state.currentBeat].forEach(sample => {
-            this.playSample(sample);
-          });
-          this.play();
-        }
-        
-      }, interval);
-    }
-  }
-  
-  playSample(sample) {
-    let resetSample = this.state.samples;
-    resetSample[sample].currentTime = 0;
-    this.setState({
-      samples: resetSample
-    });
-    this.state.samples[sample].play();
   }
 
   togglePlay() {
@@ -378,73 +426,19 @@ class Sequencer extends React.Component {
     }
   }
 
-  stopPlay() {
-    this.setState({
-      playing: false,
-      currentBeat: 0,
-      timerInProgress: false
+  tweetVideo() {
+    let data = new FormData();
+    data.set('blob', this.blob);
+    data.set('oauth_token', this.state.user.token);
+    data.set('oauth_token_secret', this.state.user.tokenSecret);
+    data.set('handle', this.state.user.name);
+    data.set('text', this.state.inputText);
+    let requestUrl = API_URL + '/video';
+
+    Axios.post(requestUrl, data).then(function (response) {
+    }).catch(function (error) {
+      throw (error);
     });
-  }
-
-  nextBeat() {
-    let nextBeat = this.state.currentBeat + 1;
-    if (nextBeat > 16) nextBeat = 1;
-    this.setState({ 
-      currentBeat: nextBeat
-     });
-  }
-
-  setTempo(newTempo) {
-    this.setState({
-      tempo: newTempo
-    });
-  }
-
-  setVolume(vol) {
-    let newVolume = vol;
-    if (newVolume < 5) newVolume = 0;
-    this.setState({
-      volume: newVolume
-    });
-    this.gainNode.gain.value = newVolume / 100;
-  }
-
-  airhorn() {
-    let resetSample = this.state.samples;
-    resetSample["Airhorn"].currentTime = 0;
-    this.setState({
-      samples: resetSample
-    });
-    this.state.samples["Airhorn"].play();
-  }
-
-  handleInputUpdate(e) {
-    if (e.target.value.length <= 240) {
-      this.setState({
-        inputText: e.target.value
-      });
-    }
-  }
-
-  changeInstructionNumber(num) {
-    if (this.state.instructionNumber === num - 1) {
-      this.setState({
-        instructionNumber: num
-      });
-    }
-  }
-
-  handleInputSubmit(e) {
-    e.preventDefault();
-    this.tweetVideo();
-    this.setState({
-      inputText: "",
-      instructionNumber: 7
-    });
-  }
-
-  emptyChunks() {
-    this.chunks = [];
   }
 
   renderGif() {

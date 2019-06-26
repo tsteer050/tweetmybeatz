@@ -18,10 +18,30 @@ class GiphySearchModal extends React.Component {
     this.handleClick = this.handleClick.bind(this);
   }
 
-
   handleChange(e) {
     this.setState({
       search: e.target.value
+    });
+  }
+
+  handleClick(url) {
+    let set = this.props.setGif;
+    Axios.get(`/gif/?url=${url}`)
+      .then(function (response) {
+        set(response.config.url);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+    if (this.props.instructionNumber === 3) {
+      this.props.changeInstructionNumber(4);
+    }
+    this.props.toggleModal();
+  }
+
+  mapSearchResults() {
+    return this.state.results.map(result => {
+      return <img alt="gif" key={result.id} className="giphy-search-result" src={result.images.downsized.url} onClick={() => this.handleClick(result.images.looping.mp4)}/>
     });
   }
 
@@ -29,7 +49,7 @@ class GiphySearchModal extends React.Component {
     e.preventDefault();
     client.search('gifs', { "q": this.state.search })
       .then((response) => {
-        
+
         response.data.forEach((gifObject) => {
           let oldResults = this.state.results;
           oldResults.push(gifObject);
@@ -43,32 +63,7 @@ class GiphySearchModal extends React.Component {
       });
   }
 
-  handleClick(url) {
-    let set = this.props.setGif;
-    Axios.get(`/gif/?url=${url}`)
-      .then(function (response) {
-        set(response.config.url);
-      })
-      .catch(function (error) {
-        // handle error
-        console.log(error);
-      })
-    // this.props.setGif(url);
-    if (this.props.instructionNumber === 3) {
-      this.props.changeInstructionNumber(4);
-    }
-    this.props.toggleModal();
-  }
-
-  mapSearchResults() {
-    return this.state.results.map(result => {
-      return <img alt="gif" key={result.id} className="giphy-search-result" src={result.images.downsized.url} onClick={() => this.handleClick(result.images.looping.mp4)}/>
-    });
-  }
-
-
   render() {
-
     return (
       <div id="giphy-search-modal-view" className="giphy-search-modal-view">
         <h1 className="modal-header">Select your gif</h1>

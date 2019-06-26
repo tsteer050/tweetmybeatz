@@ -18,26 +18,15 @@ var ffmpeg = require('fluent-ffmpeg');
 
 const Twit = require('twit');
 
-
-// Private api keys that you will get when registering an app on 
-// apps.twitter.com
 const TWITTER_CONFIG = {
   consumerKey: TWITTER_CREDS.consumerKey,
   consumerSecret: TWITTER_CREDS.consumerSecret,
-  // make sure the call back url matches what was set on Twitter
-  // when registering the app
   callbackURL: TWITTER_CREDS.callbackURL
 };
 
-
-
-
-// Create the server and allow express and sockets to run on the same port
 const app = express();
 const server = http.Server(app);
 const io = socketio(server);
-
-
 
 if (process.env.NODE_ENV !== 'production') {
   let originUrl = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:3000';
@@ -46,43 +35,23 @@ if (process.env.NODE_ENV !== 'production') {
     origin: originUrl
   })); 
 }
-// Allows the application to accept JSON and use passport
+
 app.use(express.json());
 app.use(passport.initialize());
 let formidable = formidableMiddleware();
-// app.use(formidableMiddleware());
-// app.use(bodyParser.json());
-// app.use(bodyParser.urlencoded());
-// app.use(bodyParser.urlencoded({extended: true}));
 
-// Set up cors to allow us to accept requests from our client
-
-// if (process.env.NODE_ENV !== 'production') {
-
-// }
-
-
-
-// saveUninitialized: true allows us to attach the socket id
-// to the session before we have authenticated with Twitter  
 app.use(session({
   secret: 'KeyboardKittens',
   resave: true,
   saveUninitialized: true
 }));
 
+passport.serializeUser((user, cb) => cb(null, user));
+passport.deserializeUser((obj, cb) => cb(null, obj));
 
-
-// allows us to save the user into the session
-passport.serializeUser((user, cb) => cb(null, user))
-passport.deserializeUser((obj, cb) => cb(null, obj))
-
-// Basic setup with passport and Twitter
 passport.use(new TwitterStrategy(
   TWITTER_CONFIG,
   (token, tokenSecret, profile, cb) => {
-    // console.log("PROFILE---------------------", accessToken, refreshToken);
-    // save the user right here to a database if you want
     const user = {
       name: profile.username,
       photo: profile.photos[0].value.replace(/_normal/, ''),
@@ -93,14 +62,9 @@ passport.use(new TwitterStrategy(
   })
 );
 
-// Middleware that triggers the PassportJs authentication process
 const twitterAuth = passport.authenticate('twitter');
 
-// This custom middleware picks off the socket id (that was put on req.query)
-// and stores it in the session so we can send back the right info to the 
-// right socket
 const addSocketIdToSession = (req, res, next) => {
-  
   req.session.socketId = req.query.socketId;
   next();
 };
@@ -109,32 +73,13 @@ io.on('connection', socket => {
   socket.emit('connection', 'connection successful');
 });
 
-// This is endpoint triggered by the popup on the client which starts the whole
-// authentication process
 app.get('/twitter', addSocketIdToSession, twitterAuth);
 
-// This is the endpoint that Twitter sends the user information to. 
-// The twitterAuth middleware attaches the user to req.user and then
-// the user info is sent to the client via the socket id that is in the 
-// session. 
 app.get('/twitter/callback', twitterAuth, (req, res) => {
-  console.log("--------------------------------------");
-  console.log(req.user);
-  console.log("--------------------------------------");
-  // let oauthObject = Object.values(req.sessionStore.sessions)[0];
-  // let parsedOauthObject = JSON.parse(oauthObject)["oauth:twitter"];
-  // let oauthToken = parsedOauthObject.oauth_token;
-  // let oauthTokenSecret = parsedOauthObject.oauth_token_secret;
   let user = req.user;
-  // user.oauthToken = oauthToken;
-  // user.oauthTokenSecret = oauthTokenSecret;
-  
   io.in(req.session.socketId).emit('user', user);
   res.end();
 });
-// Function to post video/tweet to twitter
-
-
 
 app.post('/video', formidable, (req, res) => {
 
@@ -143,7 +88,6 @@ app.post('/video', formidable, (req, res) => {
   const oauthTokenSecret = req.fields.oauth_token_secret;
   const handle = req.fields.handle;
   const tweetText = req.fields.text;
-  console.log ("BLOB:", blob);
   let url = blob.path;
 
   const myTweetObj = {
@@ -184,17 +128,11 @@ app.post('/video', formidable, (req, res) => {
               resolve({
                 live_link: `${base}${handle}/status/${tweet_id}`
               });
-
-            }); // end '/statuses/update'
-
-          } // end if(!err)
-
-        }); // end '/media/metadata/create'
-        // Axios.get(`https://api.twitter.com/1.1/media/upload?command=STATUS&media_id=${mediaIdStr}`).then(response => {
-        //   console.log(response);
-        // });
+            }); 
+          } 
+        }); 
       }, 1000);
-    }); // end T.postMedisChunked
+    }); 
   }
 
   ffmpeg(url)
@@ -205,33 +143,11 @@ app.post('/video', formidable, (req, res) => {
     .on('end', function (err) {
       console.log('done!');
       setTimeout(() => _twitterVideoPub(myTweetObj, () => console.log("resolved")), 2000);
-      console.log("complete!");
     })
     .on('error', function (err) {
       console.log('an error happened: ' + err.message);
     })
     .save('beat.mp4');
-
-  // hbjs.spawn({ input: url, output: 'beat.mp4', preset: 'Universal'})
-  //   .on('error', err => {
-  //     console.log("REACHED HANDBRAKE AND ERRORED");
-  //     console.log("error", err);
-  //   })
-  //   .on('progress', progress => {
-  //     console.log("REACHED HANDBRAKE AND MADE PROGRESS");
-  //     console.log(
-  //       'Percent complete: %s, ETA: %s',
-  //       progress.percentComplete,
-  //       progress.eta
-  //     );
-      
-  //   }).on('complete', () => {
-  //     console.log(url);
-  //     console.log("CALLING TWIT POST");
-
-      
-
-
 });
 
 
@@ -240,8 +156,6 @@ app.get('/gif', (req, res) => {
   const url = req.query.url;
   downloader.get(url, 'gifs');
   let subdir = '/';
-  // if (process.env.NODE_ENV === 'production') subdir = '/tmp/';
-  
   downloader.on('done', filename => {
     console.log(filename);
     setTimeout(() => {

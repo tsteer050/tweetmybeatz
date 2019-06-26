@@ -27,7 +27,6 @@ class Grid extends React.Component {
           playSample={this.props.playSample}
         />
       )
-
     });
   }
 
@@ -55,12 +54,6 @@ class Grid extends React.Component {
       </div>
     )
   }
-
-
 }
-
-
-
-
 
 export default Grid;

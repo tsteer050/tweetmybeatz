@@ -2,8 +2,6 @@ import React from 'react';
 import './transport.css';
 import GiphySearchModal from './GiphySearchModal';
 
-
-
 class Transport extends React.Component {
   constructor(props) {
     super(props);
@@ -27,46 +25,26 @@ class Transport extends React.Component {
     this.renderTweetButton = this.renderTweetButton.bind(this);
   }
 
-  updateTempo(e) {
-    this.setState({
-      tempo: e.target.value
-    });
-    
-  }
-
   handleKeyPress(e) {
     if (e.key === 'Enter') {
       this.props.setTempo(this.state.tempo);
     }
   }
 
-  updateVolume(e) {
-    this.setState({
-      volume: e.target.value 
-    });
-  }
-
   mute() {
     let vol = this.state.volume;
     if (vol > 5) {
-      this.setState ({
+      this.setState({
         volume: 0,
         oldVolume: vol
       }, () => this.props.setVolume(this.state.volume));
-      
+
     } else {
-      this.setState ({
+      this.setState({
         volume: this.state.oldVolume,
         oldVolume: 0
       }, () => this.props.setVolume(this.state.volume));
     }
-  }
-
-  toggleProgressBar() {
-    let progressBar = document.getElementById('progress-bar-div');
-    let progressBarValue = document.getElementById('progress-value');
-    progressBar.classList.toggle('visible');
-    progressBarValue.classList.toggle('progress-value');
   }
 
   record() {
@@ -99,28 +77,6 @@ class Transport extends React.Component {
     }
   }
 
-  toggleMic() {
-    this.props.toggleMic();
-    this.setState({
-      micActive: !this.state.micActive
-    });
-  }
-
-  toggleModal() {
-    let modal = document.getElementById("giphy-search-modal-view");
-    modal.classList.toggle("visible");
-  }
-
-  stopRecord() {
-    this.props.stopRecord();
-    clearTimeout(this.recordTimer);
-    this.toggleProgressBar();
-    this.setState({
-      recording: false
-    });
-    this.props.stopPlay();
-  }
-
   renderRecordButton() {
     let classString = "";
     if (this.props.instructionNumber === 5) classString = " glowing";
@@ -137,21 +93,6 @@ class Transport extends React.Component {
     }
   }
 
-  renderVideoButton() {
-    if (this.props.instructionNumber < 3) {
-      return (
-        <i className="fas fa-video transport-button inactive-button" />
-      )
-    } else {
-      return (
-        <i 
-        className={this.props.instructionNumber === 3 ? "fas fa-video transport-button glowing" : "fas fa-video transport-button"} 
-        onClick={this.toggleModal} 
-        />
-      )
-    }
-  }
-
   renderTweetButton() {
     if (this.props.instructionNumber === 4) {
       return (
@@ -162,6 +103,63 @@ class Transport extends React.Component {
         <i className="fab fa-twitter transport-button inactive-button" />
       )
     }
+  }
+
+  renderVideoButton() {
+    if (this.props.instructionNumber < 3) {
+      return (
+        <i className="fas fa-video transport-button inactive-button" />
+      )
+    } else {
+      return (
+        <i
+          className={this.props.instructionNumber === 3 ? "fas fa-video transport-button glowing" : "fas fa-video transport-button"}
+          onClick={this.toggleModal}
+        />
+      )
+    }
+  }
+
+  stopRecord() {
+    this.props.stopRecord();
+    clearTimeout(this.recordTimer);
+    this.toggleProgressBar();
+    this.setState({
+      recording: false
+    });
+    this.props.stopPlay();
+  }
+
+  toggleMic() {
+    this.props.toggleMic();
+    this.setState({
+      micActive: !this.state.micActive
+    });
+  }
+
+  toggleModal() {
+    let modal = document.getElementById("giphy-search-modal-view");
+    modal.classList.toggle("visible");
+  }
+
+  toggleProgressBar() {
+    let progressBar = document.getElementById('progress-bar-div');
+    let progressBarValue = document.getElementById('progress-value');
+    progressBar.classList.toggle('visible');
+    progressBarValue.classList.toggle('progress-value');
+  }
+
+  updateTempo(e) {
+    this.setState({
+      tempo: e.target.value
+    });
+    
+  }
+
+  updateVolume(e) {
+    this.setState({
+      volume: e.target.value 
+    });
   }
 
   render() {
@@ -231,9 +229,5 @@ class Transport extends React.Component {
     )
   }
 }
-
-
-
-
 
 export default Transport;

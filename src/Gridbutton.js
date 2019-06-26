@@ -12,7 +12,6 @@ class Gridbutton extends React.Component {
   }
 
   handleClick() {
-    
     if (this.props.instructionNumber === 1) {
       this.props.changeInstructionNumber(2);
     }
@@ -45,6 +44,5 @@ class Gridbutton extends React.Component {
     )
   }
 }
-
 
 export default Gridbutton;
