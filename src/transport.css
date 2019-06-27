@@ -224,7 +224,8 @@ input[type=number]::-webkit-inner-spin-button {
 }
 
 .tweet-text-input {
-  text-align: center; 
+  padding-top: 25px;
+  text-align: left; 
   height: 100%;
   color: rgb(196, 46, 255);
   background: none;
