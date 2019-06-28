@@ -10,6 +10,7 @@
     "express": "^4.17.1",
     "express-formidable": "^1.2.0",
     "express-session": "^1.16.2",
+    "express-sslify": "^1.2.0",
     "ffmpeg": "0.0.4",
     "file-saver": "^2.0.2",
     "fluent-ffmpeg": "^2.1.2",

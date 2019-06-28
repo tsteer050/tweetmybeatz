@@ -83,8 +83,8 @@ class Transport extends React.Component {
     if (this.props.instructionNumber >= 5 && this.props.recordPossible) {
       return (
         <i
-          className={this.state.recording ? "fas fa-stop-circle transport-button state-active" : "fas fa-circle transport-button" + classString}
-          onClick={this.state.recording ? this.stopRecord : this.record} />
+          className={this.state.recording ? "fas fa-circle transport-button state-active" : "fas fa-circle transport-button" + classString}
+          onClick={this.state.recording ? "" : this.record} />
       )
     } else {
       return (
@@ -206,11 +206,11 @@ class Transport extends React.Component {
         </div>
         <div className="transport-buttons">
           {playPause()}
-          {this.renderRecordButton()}
           <i className={this.state.micActive ? "fas fa-microphone-alt transport-button state-active" : "fas fa-microphone-alt transport-button"} onClick={this.toggleMic}/>
           <i className="fas fa-bullhorn transport-button" onClick={this.props.airhorn}/>
           {this.renderVideoButton()}
           {this.renderTweetButton()}
+          {this.renderRecordButton()}
           <GiphySearchModal className="giphy-search-modal" toggleModal={this.toggleModal} setGif={this.props.setGif} instructionNumber={this.props.instructionNumber} changeInstructionNumber={this.props.changeInstructionNumber}/>
         </div>
         <div className="outer-progress-bar-div">

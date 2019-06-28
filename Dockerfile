@@ -9,7 +9,8 @@ FROM node:carbon
         ARG CONSUMER_SECRET='RoBVScAziZEFLrF6duDaI6Hmo4O2MqfYXZ89FZ6KEHe3yciuZm'
     ENV CONSUMER_SECRET=$CONSUMER_SECRET
 
-        ARG CALLBACK_URL='https://tweetmybeatz.herokuapp.com/twitter/callback'
+ARG CALLBACK_URL='https://www.tweetmybeatz.com/twitter/callback'
+        # ARG CALLBACK_URL='https://tweetmybeatz.herokuapp.com/twitter/callback'
     ENV CALLBACK_URL=$CALLBACK_URL
 ADD setup-ffmpeg.sh /
 RUN /setup-ffmpeg.sh
