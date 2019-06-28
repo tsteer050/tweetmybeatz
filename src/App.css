@@ -71,3 +71,7 @@
 ::-webkit-scrollbar-thumb {
   background: rgba(63, 62, 62, 0.85);
 }
+
+#body {
+  overflow-y: hidden;
+}

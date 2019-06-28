@@ -167,7 +167,7 @@ class Transport extends React.Component {
       if (this.props.playing) {
         return (
           <i className="fas fa-pause transport-button"
-            onClick={this.props.togglePlay}
+            onClick={this.props.stopPlay}
             alt="Pause" />
         )
       } else {
@@ -206,11 +206,6 @@ class Transport extends React.Component {
         </div>
         <div className="transport-buttons">
           {playPause()}
-          <i
-            className="fas fa-stop transport-button"
-            onClick={this.props.stopPlay}
-            alt="Stop"
-          />
           {this.renderRecordButton()}
           <i className={this.state.micActive ? "fas fa-microphone-alt transport-button state-active" : "fas fa-microphone-alt transport-button"} onClick={this.toggleMic}/>
           <i className="fas fa-bullhorn transport-button" onClick={this.props.airhorn}/>
