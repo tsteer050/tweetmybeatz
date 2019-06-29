@@ -3,7 +3,9 @@ import Axios from 'axios';
 
 import './tweetmodal.css';
 
-const io = window.io;
+
+// const io = window.io;
+import io from 'socket.io-client';
 const API_URL = process.env.NODE_ENV === 'production' ? '' : 'http://127.0.0.1:5000';
 
 
@@ -95,6 +97,7 @@ class TweetModal extends React.Component {
     }).catch(function (error) {
       throw (error);
     });
+  }
 
   render() {
     return (

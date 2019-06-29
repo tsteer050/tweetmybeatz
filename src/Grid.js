@@ -23,6 +23,9 @@ class Grid extends React.Component {
           currentBeat={this.props.currentBeat}
           activeSamples={this.props.activeSamples}
           playSample={this.props.playSample}
+          beatExists={this.props.beatExists}
+          recordPossible={this.props.recordPossible}
+          registerBeatExists={this.props.registerBeatExists}
         />
       )
     });

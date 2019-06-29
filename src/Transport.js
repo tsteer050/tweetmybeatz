@@ -22,7 +22,6 @@ class Transport extends React.Component {
     this.renderRecordButton = this.renderRecordButton.bind(this);
     this.stopRecord = this.stopRecord.bind(this);
     this.renderVideoButton = this.renderVideoButton.bind(this);
-    this.renderTweetButton = this.renderTweetButton.bind(this);
     this.renderMicButton = this.renderMicButton.bind(this);
     this.renderPlayPauseButton = this.renderPlayPauseButton.bind(this);
     this.renderAirhornButton = this.renderAirhornButton.bind(this);
@@ -83,18 +82,19 @@ class Transport extends React.Component {
 
   renderAirhornButton() {
     return (
-      <div>
+      <div className="label-div">
         <i className="fas fa-bullhorn transport-button" onClick={this.props.airhorn} />
-        <h5>Airhorn</h5>
+        <h5 className="label-text">Airhorn</h5>
       </div>
     )
   }
 
   renderMicButton() {
     return (
-      <div>
+      <div className="label-div">
         <i className={this.state.micActive ? "fas fa-microphone-alt transport-button state-active" : "fas fa-microphone-alt transport-button"} onClick={this.toggleMic} />
-        <h5>Enable microphone</h5>
+        <h5 className="label-text">Enable</h5>
+        <h5 className="label-text">mic</h5>
       </div>
     )
   }
@@ -102,38 +102,46 @@ class Transport extends React.Component {
   renderPlayPauseButton() {
       if (this.props.playing) {
         return (
-          <div>
+          <div className="label-div">
             <i className="fas fa-pause transport-button"
               onClick={this.props.stopPlay}
               alt="Pause" />
-            <h5>Play/pause</h5>
+            <h5 className="label-text">Play/</h5>
+            <h5 className="label-text">pause</h5>
           </div>
         )
       } else {
           return (
-            <div>
+            <div className="label-div">
               <i className="fas fa-play transport-button"
                 onClick={this.props.togglePlay}
                 alt="Play" />
-              <h5>Play/pause</h5>
+              <h5 className="label-text">Play/</h5>
+              <h5 className="label-text">pause</h5>
             </div>
           )
         } 
       }
-    }
+    
 
   renderRecordButton() {
     let classString = "";
     if (this.props.beatExists && this.props.gif ) classString = " glowing";
     if (this.props.recordPossible) {
       return (
-        <i
-          className={this.state.recording ? "fas fa-circle transport-button state-active" : "fas fa-circle transport-button" + classString}
-          onClick={this.state.recording ? "" : this.record} />
+        <div className="label-div">
+          <i
+            className={this.state.recording ? "fas fa-circle transport-button state-active" : "fas fa-circle transport-button" + classString}
+            onClick={this.state.recording ? "" : this.record} />
+          <h5 className="label-text">Record</h5>
+        </div>
       )
     } else {
       return (
-        <i className="fas fa-exclamation-circle transport-button inactive-button" />
+        <div className="label-div">
+          <i className="fas fa-exclamation-circle transport-button inactive-button" title="Program a beat and pick a gif to enable recording" />
+          <h5 className="label-text">Record</h5>
+        </div>
       )
     }
   }
@@ -141,19 +149,21 @@ class Transport extends React.Component {
   renderVideoButton() {
     if (this.props.instructionNumber < 3) {
       return (
-        <div>
+        <div className="label-div">
           <i className="fas fa-video transport-button inactive-button" />
-          <h5>Select a gif</h5>
+          <h5 className="label-text">Select</h5>
+          <h5 className="label-text">a gif</h5>
         </div>
       )
     } else {
       return (
-        <div>
+        <div className="label-div">
           <i
             className={this.props.instructionNumber === 3 ? "fas fa-video transport-button glowing" : "fas fa-video transport-button"}
             onClick={this.toggleModal}
           />          
-          <h5>Select a gif</h5>
+          <h5 className="label-text">Select</h5>
+          <h5 className="label-text">a gif</h5>
         </div>
       )
     }

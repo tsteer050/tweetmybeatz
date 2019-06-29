@@ -18,6 +18,7 @@
   color: rgb(196, 46, 255);
   text-shadow: 0 0 10px rgb(196, 46, 255);;
   width: 300px;
+  cursor: default;
 }
 
 .sequencer-top {

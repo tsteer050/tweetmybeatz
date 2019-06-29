@@ -2,7 +2,6 @@ import React from 'react';
 import Grid from './Grid';
 import Transport from './Transport';
 import TweetModal from './TweetModal';
-import Axios from 'axios';
 
 import defaultSamples from './resources/samples/DefaultSamples';
 import boutiqueSamples from './resources/samples/Boutique 78/BoutiqueSamples';
@@ -86,7 +85,6 @@ class Sequencer extends React.Component {
     this.configureRecorder = this.configureRecorder.bind(this);
     this.stopRecord = this.stopRecord.bind(this);
     this.finishRecord = this.finishRecord.bind(this);
-    this.tweetVideo = this.tweetVideo.bind(this);
     this.emptyChunks = this.emptyChunks.bind(this);
     this.playSample = this.playSample.bind(this);
     this.registerBeatExists = this.registerBeatExists.bind(this);
@@ -495,7 +493,6 @@ class Sequencer extends React.Component {
             {this.renderGif()}
           </div>
         </div>
-        <h3 id="instruction-text" className="instruction-text">{this.instructions[this.state.instructionNumber]}</h3>
         <Grid 
         playing={this.state.playing}
         addActiveSample={this.addActiveSample}
