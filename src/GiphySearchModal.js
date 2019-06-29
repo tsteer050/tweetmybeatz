@@ -33,9 +33,6 @@ class GiphySearchModal extends React.Component {
       .catch(function (error) {
         console.log(error);
       });
-    if (this.props.instructionNumber === 3) {
-      this.props.changeInstructionNumber(4);
-    }
     this.props.toggleModal();
   }
 

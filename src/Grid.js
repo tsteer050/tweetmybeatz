@@ -22,8 +22,6 @@ class Grid extends React.Component {
           sample={i}
           currentBeat={this.props.currentBeat}
           activeSamples={this.props.activeSamples}
-          instructionNumber={this.props.instructionNumber}
-          changeInstructionNumber={this.props.changeInstructionNumber}
           playSample={this.props.playSample}
         />
       )
@@ -42,7 +40,7 @@ class Grid extends React.Component {
 
   render() {
     return (
-      <div id="grid" className={this.props.instructionNumber === 1 ? "grid glowing" : "grid"}>
+      <div id="grid" className={!this.props.beatExists ? "grid glowing" : "grid"}>
         <div className="grid-rows">
           {this.renderRows()}
         </div>

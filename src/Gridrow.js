@@ -23,8 +23,8 @@ class Gridrow extends React.Component {
           removeActiveSample={this.props.removeActiveSample}
           beat={i}
           sample={this.props.sample}
-          instructionNumber={this.props.instructionNumber}
-          changeInstructionNumber={this.props.changeInstructionNumber}
+          beatExists={this.props.beatExists}
+          registerBeatExists={this.props.registerBeatExists}
           highlight={(this.props.playing && i === this.props.currentBeat) ? "highlight-grid-button" : ""}
         />
       )

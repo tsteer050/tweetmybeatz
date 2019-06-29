@@ -1,6 +1,7 @@
 import React from 'react';
 import Grid from './Grid';
 import Transport from './Transport';
+import TweetModal from './TweetModal';
 import Axios from 'axios';
 
 import defaultSamples from './resources/samples/DefaultSamples';
@@ -11,8 +12,7 @@ import streetSamples from './resources/samples/Street/StreetSamples';
 
 import './sequencer.css';
 
-const API_URL = process.env.NODE_ENV === 'production' ? '' :'http://127.0.0.1:5000';
-const io = window.io;
+
 
 const kits = {
   "Default": defaultSamples,
@@ -37,28 +37,16 @@ class Sequencer extends React.Component {
     this.chunks = [];
     this.listener = false;
     this.popup = null;
-    this.blob = null;
-    this.instructions = [
-      "",
-      "Create a beat using the buttons below",
-      "Press play to hear your beat",
-      "Click to select a gif",
-      "Click to sign in to Twitter",
-      "Click record to generate your video",
-      "Enter the text for your Tweet and click to send",
-      "You Tweeted a sick beat.  People probably like you now"
-    ];
-    
+
     this.state = {
-      inputText: "",
-      user: null,
+      blob: null,
       disabled: '',
-      instructionNumber: 1,
       playing: false,
       tempo: 80,
       currentBeat: 1,
       timerInProgress: false,
       volume: 100,
+      beatExists: false,
       gif: null,
       recorder: null,
       recordPossible: false,
@@ -99,26 +87,21 @@ class Sequencer extends React.Component {
     this.stopRecord = this.stopRecord.bind(this);
     this.finishRecord = this.finishRecord.bind(this);
     this.tweetVideo = this.tweetVideo.bind(this);
-    this.changeInstructionNumber = this.changeInstructionNumber.bind(this);
     this.emptyChunks = this.emptyChunks.bind(this);
     this.playSample = this.playSample.bind(this);
-
-    this.closeCard = this.closeCard.bind(this);
-    this.startAuth = this.startAuth.bind(this);
-    this.openPopup = this.openPopup.bind(this);
-    this.checkPopup = this.checkPopup.bind(this);
+    this.registerBeatExists = this.registerBeatExists.bind(this);
   }
 
  
   componentDidMount() {
-    this.socket = io.connect(process.env.NODE_ENV === 'production' ? 'https://tweetmybeatz.herokuapp.com' : 'http://127.0.0.1:5000');
+    // this.socket = io.connect(process.env.NODE_ENV === 'production' ? 'https://tweetmybeatz.herokuapp.com' : 'http://127.0.0.1:5000');
 
-    this.socket.on('user', user => {
-      this.popup.close();
-      this.setState({ user });
+    // this.socket.on('user', user => {
+    //   this.popup.close();
+    //   this.setState({ user });
 
-      this.socket.on('connection', message => console.log(message))
-    });
+    //   this.socket.on('connection', message => console.log(message))
+    // });
     try {
       window.AudioContext = window.AudioContext || window.webkitAudioContext;
       this.audioContext = new AudioContext();
@@ -182,14 +165,6 @@ class Sequencer extends React.Component {
     this.state.samples["Airhorn"].play();
   }
 
-  changeInstructionNumber(num) {
-    if (this.state.instructionNumber === num - 1) {
-      this.setState({
-        instructionNumber: num
-      });
-    }
-  }
-
   changeKit(kit) {
     let newSamples = this.state.samples;
     samples.forEach(key => {
@@ -200,23 +175,22 @@ class Sequencer extends React.Component {
     });
   }
   
-  checkPopup() {
-    const check = setInterval(() => {
-      const { popup } = this
-      if (!popup || popup.closed || popup.closed === undefined) {
-        clearInterval(check);
-        this.setState({ disabled: '' });
-      }
-    }, 1000);
-  }
+  // checkPopup() {
+  //   const check = setInterval(() => {
+  //     const { popup } = this
+  //     if (!popup || popup.closed || popup.closed === undefined) {
+  //       clearInterval(check);
+  //       this.setState({ disabled: '' });
+  //     }
+  //   }, 1000);
+  // }
 
-  closeCard() {
-    this.setState({ user: {} });
-  }
+  // closeCard() {
+  //   this.setState({ user: {} });
+  // }
 
   componentDidUpdate() {
     this.play();
-    if (this.state.user) this.changeInstructionNumber(5);
   }
 
   configureRecorder() {
@@ -235,8 +209,13 @@ class Sequencer extends React.Component {
 
     recorder.onstop = () => {
       if (this.chunks.length) {
-        this.blob = new Blob(this.chunks, { type: 'video/webm' });
-        this.changeInstructionNumber(6);
+        let blob = new Blob(this.chunks, { type: 'video/webm' });
+        this.setState({
+          blob
+        });
+        
+        let tweetModal = document.getElementById('tweet-modal');
+        tweetModal.classList.toggle('visible');
       }
     };
     this.recorder = recorder;
@@ -284,19 +263,19 @@ class Sequencer extends React.Component {
     });
   }
 
-  openPopup() {
-    const width = 600, height = 600;
-    const left = (window.innerWidth / 2) - (width / 2);
-    const top = (window.innerHeight / 2) - (height / 2);
+  // openPopup() {
+  //   const width = 600, height = 600;
+  //   const left = (window.innerWidth / 2) - (width / 2);
+  //   const top = (window.innerHeight / 2) - (height / 2);
 
-    const url = `${API_URL}/twitter?socketId=${this.socket.id}`;
+  //   const url = `${API_URL}/twitter?socketId=${this.socket.id}`;
 
-    return window.open(url, '',
-      `toolbar=no, location=no, directories=no, status=no, menubar=no, 
-      scrollbars=no, resizable=no, copyhistory=no, width=${width}, 
-      height=${height}, top=${top}, left=${left}`
-    );
-  }
+  //   return window.open(url, '',
+  //     `toolbar=no, location=no, directories=no, status=no, menubar=no, 
+  //     scrollbars=no, resizable=no, copyhistory=no, width=${width}, 
+  //     height=${height}, top=${top}, left=${left}`
+  //   );
+  // }
 
   play() {
     if (!this.state.timerInProgress) {
@@ -328,6 +307,12 @@ class Sequencer extends React.Component {
       samples: resetSample
     });
     this.state.samples[sample].play();
+  }
+
+  registerBeatExists() {
+    this.setState({
+      beatExists: true
+    });
   }
 
   removeActiveSample(sample, beat) {
@@ -381,13 +366,13 @@ class Sequencer extends React.Component {
     this.gainNode.gain.value = newVolume / 100;
   }
 
-  startAuth() {
-    if (!this.state.disabled) {
-      this.popup = this.openPopup();
-      this.checkPopup();
-      this.setState({ disabled: 'disabled' });
-    }
-  }
+  // startAuth() {
+  //   if (!this.state.disabled) {
+  //     this.popup = this.openPopup();
+  //     this.checkPopup();
+  //     this.setState({ disabled: 'disabled' });
+  //   }
+  // }
 
   stopPlay() {
     this.setState({
@@ -426,20 +411,20 @@ class Sequencer extends React.Component {
     }
   }
 
-  tweetVideo() {
-    let data = new FormData();
-    data.set('blob', this.blob);
-    data.set('oauth_token', this.state.user.token);
-    data.set('oauth_token_secret', this.state.user.tokenSecret);
-    data.set('handle', this.state.user.name);
-    data.set('text', this.state.inputText);
-    let requestUrl = API_URL + '/video';
+  // tweetVideo() {
+  //   let data = new FormData();
+  //   data.set('blob', this.state.blob);
+  //   data.set('oauth_token', this.state.user.token);
+  //   data.set('oauth_token_secret', this.state.user.tokenSecret);
+  //   data.set('handle', this.state.user.name);
+  //   data.set('text', this.state.inputText);
+  //   let requestUrl = API_URL + '/video';
 
-    Axios.post(requestUrl, data).then(function (response) {
-    }).catch(function (error) {
-      throw (error);
-    });
-  }
+  //   Axios.post(requestUrl, data).then(function (response) {
+  //   }).catch(function (error) {
+  //     throw (error);
+  //   });
+  // }
 
   renderGif() {
     if (this.state.instructionNumber === 6) {
@@ -491,10 +476,11 @@ class Sequencer extends React.Component {
             configureRecorder={this.configureRecorder}
             stopRecord={this.stopRecord}
             finishRecord={this.finishRecord}
-            instructionNumber={this.state.instructionNumber}
+            beatExists={this.state.beatExists}
             recordPossible={this.state.recordPossible}
-            changeInstructionNumber={this.changeInstructionNumber}
+            registerBeatExists={this.registerBeatExists}
             emptyChunks={this.emptyChunks}
+            gif={this.gif}
 
             closeCard={this.closeCard}
             startAuth={this.startAuth}
@@ -516,10 +502,12 @@ class Sequencer extends React.Component {
         removeActiveSample={this.removeActiveSample}
         currentBeat={this.state.currentBeat}
         activeSamples={this.state.activeSamples}
-        instructionNumber={this.state.instructionNumber}
-        changeInstructionNumber={this.changeInstructionNumber}
+        beatExists={this.state.beatExists}
+        recordPossible={this.state.recordPossible}
+        registerBeatExists={this.registerBeatExists}
         playSample={this.playSample}
         />
+        <TweetModal />
       </div>
     )
   }

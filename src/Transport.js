@@ -23,6 +23,9 @@ class Transport extends React.Component {
     this.stopRecord = this.stopRecord.bind(this);
     this.renderVideoButton = this.renderVideoButton.bind(this);
     this.renderTweetButton = this.renderTweetButton.bind(this);
+    this.renderMicButton = this.renderMicButton.bind(this);
+    this.renderPlayPauseButton = this.renderPlayPauseButton.bind(this);
+    this.renderAirhornButton = this.renderAirhornButton.bind(this);
   }
 
   handleKeyPress(e) {
@@ -65,6 +68,7 @@ class Transport extends React.Component {
         });
         this.props.stopPlay();
         this.props.finishRecord();
+      
 
       }, 8000);
     } else {
@@ -77,10 +81,51 @@ class Transport extends React.Component {
     }
   }
 
+  renderAirhornButton() {
+    return (
+      <div>
+        <i className="fas fa-bullhorn transport-button" onClick={this.props.airhorn} />
+        <h5>Airhorn</h5>
+      </div>
+    )
+  }
+
+  renderMicButton() {
+    return (
+      <div>
+        <i className={this.state.micActive ? "fas fa-microphone-alt transport-button state-active" : "fas fa-microphone-alt transport-button"} onClick={this.toggleMic} />
+        <h5>Enable microphone</h5>
+      </div>
+    )
+  }
+
+  renderPlayPauseButton() {
+      if (this.props.playing) {
+        return (
+          <div>
+            <i className="fas fa-pause transport-button"
+              onClick={this.props.stopPlay}
+              alt="Pause" />
+            <h5>Play/pause</h5>
+          </div>
+        )
+      } else {
+          return (
+            <div>
+              <i className="fas fa-play transport-button"
+                onClick={this.props.togglePlay}
+                alt="Play" />
+              <h5>Play/pause</h5>
+            </div>
+          )
+        } 
+      }
+    }
+
   renderRecordButton() {
     let classString = "";
-    if (this.props.instructionNumber === 5) classString = " glowing";
-    if (this.props.instructionNumber >= 5 && this.props.recordPossible) {
+    if (this.props.beatExists && this.props.gif ) classString = " glowing";
+    if (this.props.recordPossible) {
       return (
         <i
           className={this.state.recording ? "fas fa-circle transport-button state-active" : "fas fa-circle transport-button" + classString}
@@ -93,29 +138,23 @@ class Transport extends React.Component {
     }
   }
 
-  renderTweetButton() {
-    if (this.props.instructionNumber === 4) {
-      return (
-        <i className="fab fa-twitter transport-button glowing" onClick={this.props.startAuth} />
-      )
-    } else {
-      return (
-        <i className="fab fa-twitter transport-button inactive-button" />
-      )
-    }
-  }
-
   renderVideoButton() {
     if (this.props.instructionNumber < 3) {
       return (
-        <i className="fas fa-video transport-button inactive-button" />
+        <div>
+          <i className="fas fa-video transport-button inactive-button" />
+          <h5>Select a gif</h5>
+        </div>
       )
     } else {
       return (
-        <i
-          className={this.props.instructionNumber === 3 ? "fas fa-video transport-button glowing" : "fas fa-video transport-button"}
-          onClick={this.toggleModal}
-        />
+        <div>
+          <i
+            className={this.props.instructionNumber === 3 ? "fas fa-video transport-button glowing" : "fas fa-video transport-button"}
+            onClick={this.toggleModal}
+          />          
+          <h5>Select a gif</h5>
+        </div>
       )
     }
   }
@@ -163,26 +202,6 @@ class Transport extends React.Component {
   }
 
   render() {
-    let playPause = () => {
-      if (this.props.playing) {
-        return (
-          <i className="fas fa-pause transport-button"
-            onClick={this.props.stopPlay}
-            alt="Pause" />
-        )
-      } else {
-          if (this.props.instructionNumber > 1) {
-            return (
-              <i className={this.props.instructionNumber === 2 ? "fas fa-play transport-button glowing" : "fas fa-play transport-button"}
-                onClick={this.props.togglePlay}
-                alt="Play" />
-            )
-          } else {
-            return (
-              <i className="fas fa-play transport-button inactive-button" alt="Play" />
-          )} 
-      }
-    };
 
     return (
       <div className="transport">
@@ -205,13 +224,12 @@ class Transport extends React.Component {
           </div>
         </div>
         <div className="transport-buttons">
-          {playPause()}
-          <i className={this.state.micActive ? "fas fa-microphone-alt transport-button state-active" : "fas fa-microphone-alt transport-button"} onClick={this.toggleMic}/>
-          <i className="fas fa-bullhorn transport-button" onClick={this.props.airhorn}/>
+          {this.renderPlayPauseButton()}
+          {this.renderMicButton()}
+          {this.renderAirhornButton()}
           {this.renderVideoButton()}
-          {this.renderTweetButton()}
           {this.renderRecordButton()}
-          <GiphySearchModal className="giphy-search-modal" toggleModal={this.toggleModal} setGif={this.props.setGif} instructionNumber={this.props.instructionNumber} changeInstructionNumber={this.props.changeInstructionNumber}/>
+          <GiphySearchModal className="giphy-search-modal" toggleModal={this.toggleModal} setGif={this.props.setGif} beatExists={this.props.beatExists} registerBeatExists={this.props.registerBeatExists}/>
         </div>
         <div className="outer-progress-bar-div">
           <div id="progress-bar-div">
