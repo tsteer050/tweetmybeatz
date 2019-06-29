@@ -11,7 +11,6 @@ const path = require('path');
 const TWITTER_CREDS = require('./config.js').TWITTER_CONFIG;
 var ffmpeg = require('fluent-ffmpeg');
 const Twit = require('twit');
-var enforce = require('express-sslify');
 
 const TWITTER_CONFIG = {
   consumerKey: TWITTER_CREDS.consumerKey,
@@ -32,7 +31,6 @@ if (process.env.NODE_ENV !== 'production') {
   })); 
 }
 
-app.use(enforce.HTTPS());
 app.use(express.json());
 app.use(passport.initialize());
 let formidable = formidableMiddleware();
