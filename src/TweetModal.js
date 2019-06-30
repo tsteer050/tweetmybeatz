@@ -15,8 +15,13 @@ class TweetModal extends React.Component {
     super(props);
     this.state = {
       user: null,
-      inputText: null
+      inputText: "",
+      url: null
     };
+    this.checkPopup = this.checkPopup.bind(this);
+    this.closeCard = this.closeCard.bind(this);
+    this.openPopup = this.openPopup.bind(this);
+    this.startAuth = this.startAuth.bind(this);
   }
 
   componentDidMount() {
@@ -28,6 +33,17 @@ class TweetModal extends React.Component {
 
       this.socket.on('connection', message => console.log(message))
     });
+  }
+
+  componentDidUpdate() {
+    if(this.props.blob && this.state.url === null) {
+      let url = URL.createObjectURL(this.props.blob);
+      this.setState({
+        url
+      });
+      let video = document.getElementById('modal-video');
+      video.load();
+    }
   }
 
   checkPopup() {
@@ -44,6 +60,23 @@ class TweetModal extends React.Component {
     this.setState({ user: {} });
   }
 
+  handleInputSubmit(e) {
+    e.preventDefault();
+    this.tweetVideo();
+    this.setState({
+      inputText: "",
+      url: null
+    });
+  }
+
+  handleInputUpdate(e) {
+    if (e.target.value.length <= 280) {
+      this.setState({
+        inputText: e.target.value
+      });
+    }
+  }
+
   openPopup() {
     const width = 600, height = 600;
     const left = (window.innerWidth / 2) - (width / 2);
@@ -58,19 +91,42 @@ class TweetModal extends React.Component {
     );
   }
 
+  renderDownloadButton() {
+    return (
+      <div className="label-div">
+        <i className="fas fa-file-download transport-button"
+          alt="Download" />
+        <h5 className="label-text">Download</h5>
+        <h5 className="label-text">Video</h5>
+      </div>
+    )
+  }
+
   renderTweetButton() {
+    return (
+      <div className="label-div">
+        <i className="fas fa-paper-plane transport-button" onClick={(e) => this.handleInputSubmit(e)}/>
+        <h5 className="label-text">Send</h5>
+        <h5 className="label-text">Tweet</h5>
+      </div>
+    )
+  }
+
+  renderTwitterLoginButton() {
     if (!this.state.user) {
       return (
-        <div>
+        <div className="label-div">
           <i className="fab fa-twitter transport-button glowing" onClick={this.startAuth} />
-          <h5>Login to Twitter</h5>
+          <h5 className="label-text">Login to</h5>
+          <h5 className="label-text">Twitter</h5>
         </div>
       )
     } else {
       return (
-        <div>
-          <i className="fab fa-twitter transport-button inactive-button" />
-          <h5>Login to Twitter</h5>
+        <div className="label-div">
+          <i className="fas fa-check-square transport-button success" />
+          <h5 className="success label-text">Logged</h5>
+          <h5 className="success label-text">In!</h5>
         </div>
       )
     }
@@ -82,6 +138,11 @@ class TweetModal extends React.Component {
       this.checkPopup();
       this.setState({ disabled: 'disabled' });
     }
+  }
+
+  toggleModal() {
+    let tweetModal = document.getElementById('tweet-modal');
+    tweetModal.classList.toggle('visible');
   }
 
   tweetVideo() {
@@ -102,11 +163,36 @@ class TweetModal extends React.Component {
   render() {
     return (
       <div id="tweet-modal" className="tweet-modal">
-        <h1>Tweeting modal</h1>
-        <video id="video" className="video" autoPlay loop>
-          <source src={this.props.blob ? this.props.blob : ""} type="video/mp4" />
-        </video>
-        {this.renderTweetButton()}
+        <button className="close-modal-button" onClick={this.toggleModal}>X</button>
+        <h1 className="modal-title">Send it!</h1>
+        <div className="tweet-content-div">
+          <video id="modal-video" className="video" autoPlay loop>
+            <source src={this.state.url ? this.state.url : ""} type="video/webm" controls/>
+          </video>
+          <div className="text-input-div">
+            <form className="tweet-form" >
+              <div className="tweet-textarea-div">
+                <textarea
+                  maxLength="280"
+                  className="tweet-text-input"
+                  placeholder="#tweetmybeatz"
+                  value={this.state.inputText}
+                  onChange={(e) => this.handleInputUpdate(e)}
+                />
+              </div>
+              <div className="form-controls">
+                <h5 className="character-limit-text">{280 - this.state.inputText.length} characters remaining</h5>
+              </div>
+              <div className="form-buttons">
+                {this.renderTwitterLoginButton()}
+                {this.renderDownloadButton()}
+                
+
+                {this.renderTweetButton()}
+              </div>
+            </form>
+          </div>
+        </div>
       </div>
     )
   }

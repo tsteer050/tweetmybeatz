@@ -209,19 +209,7 @@ input[type=number]::-webkit-inner-spin-button {
   border-radius: 8px;
 }
 
-.tweet-textarea-div {
-  color: rgb(196, 46, 255);
-  width: 250px;
-  height: 250px;
-  margin-left: 50px;
-  border-radius: 8px;
-  background-image:
-  radial-gradient(
-    #240a2b,
-    #161616
-  );
-  border: 2px solid rgb(32, 31, 31);
-}
+
 
 .tweet-text-input {
   padding-top: 25px;

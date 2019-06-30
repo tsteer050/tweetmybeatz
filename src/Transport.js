@@ -152,7 +152,7 @@ class Transport extends React.Component {
         <div className="label-div">
           <i className="fas fa-video transport-button inactive-button" />
           <h5 className="label-text">Select</h5>
-          <h5 className="label-text">a gif</h5>
+          <h5 className="label-text">gif</h5>
         </div>
       )
     } else {

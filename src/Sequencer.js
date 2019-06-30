@@ -228,22 +228,22 @@ class Sequencer extends React.Component {
     this.chunks = [];
   }
 
-  handleInputSubmit(e) {
-    e.preventDefault();
-    this.tweetVideo();
-    this.setState({
-      inputText: "",
-      instructionNumber: 7
-    });
-  }
+  // handleInputSubmit(e) {
+  //   e.preventDefault();
+  //   this.tweetVideo();
+  //   this.setState({
+  //     inputText: "",
+  //     instructionNumber: 7
+  //   });
+  // }
 
-  handleInputUpdate(e) {
-    if (e.target.value.length <= 240) {
-      this.setState({
-        inputText: e.target.value
-      });
-    }
-  }
+  // handleInputUpdate(e) {
+  //   if (e.target.value.length <= 240) {
+  //     this.setState({
+  //       inputText: e.target.value
+  //     });
+  //   }
+  // }
 
   incrementBeat() {
     let beat = this.state.currentBeat + 1;
@@ -504,7 +504,7 @@ class Sequencer extends React.Component {
         registerBeatExists={this.registerBeatExists}
         playSample={this.playSample}
         />
-        <TweetModal />
+        <TweetModal blob={this.state.blob}/>
       </div>
     )
   }
