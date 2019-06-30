@@ -425,33 +425,33 @@ class Sequencer extends React.Component {
   // }
 
   renderGif() {
-    if (this.state.instructionNumber === 6) {
-      return (
-        <div className="text-input-div">
-          <form className="tweet-form" >
-            <div className="tweet-textarea-div">
-              <textarea
-                maxLength="280"
-                className="tweet-text-input"
-                placeholder="#tweetmybeatz"
-                value={this.state.inputText}
-                onChange={(e) => this.handleInputUpdate(e)}
-              />
-            </div>
-            <div className="form-controls">
-              <button className="tweet-submit-button glowing" type="submit" onClick={(e) => this.handleInputSubmit(e)}><i className="fab fa-twitter small-twitter-icon"/></button>
-              <h5 className="character-limit-text">{280 - this.state.inputText.length} characters remaining</h5>
-            </div>
-          </form>
-        </div>
-      )
-    } else {
-      return (
-        <video id="video" className="video" autoPlay loop>
-          <source src={this.state.gif ? this.state.gif : ""} type="video/mp4" />
-        </video>
-      );
-    }
+    // if (this.state.instructionNumber === 6) {
+    //   return (
+    //     <div className="text-input-div">
+    //       <form className="tweet-form" >
+    //         <div className="tweet-textarea-div">
+    //           <textarea
+    //             maxLength="280"
+    //             className="tweet-text-input"
+    //             placeholder="#tweetmybeatz"
+    //             value={this.state.inputText}
+    //             onChange={(e) => this.handleInputUpdate(e)}
+    //           />
+    //         </div>
+    //         <div className="form-controls">
+    //           <button className="tweet-submit-button glowing" type="submit" onClick={(e) => this.handleInputSubmit(e)}><i className="fab fa-twitter small-twitter-icon"/></button>
+    //           <h5 className="character-limit-text">{280 - this.state.inputText.length} characters remaining</h5>
+    //         </div>
+    //       </form>
+    //     </div>
+    //   )
+    // } else {
+    return (
+      <video id="video" className="video" autoPlay loop>
+        <source src={this.state.gif ? this.state.gif : ""} type="video/mp4" />
+      </video>
+    );
+    // }
   }
 
   render() {

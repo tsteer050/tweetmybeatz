@@ -107,7 +107,7 @@ class Transport extends React.Component {
               onClick={this.props.stopPlay}
               alt="Pause" />
             <h5 className="label-text">Play/</h5>
-            <h5 className="label-text">pause</h5>
+            <h5 className="label-text">Pause</h5>
           </div>
         )
       } else {
@@ -117,7 +117,7 @@ class Transport extends React.Component {
                 onClick={this.props.togglePlay}
                 alt="Play" />
               <h5 className="label-text">Play/</h5>
-              <h5 className="label-text">pause</h5>
+              <h5 className="label-text">Pause</h5>
             </div>
           )
         } 
@@ -140,7 +140,7 @@ class Transport extends React.Component {
       return (
         <div className="label-div">
           <i className="fas fa-exclamation-circle transport-button inactive-button" title="Program a beat and pick a gif to enable recording" />
-          <h5 className="label-text">Record</h5>
+          <h5 className="label-text-inactive">Record</h5>
         </div>
       )
     }
@@ -152,7 +152,7 @@ class Transport extends React.Component {
         <div className="label-div">
           <i className="fas fa-video transport-button inactive-button" />
           <h5 className="label-text">Select</h5>
-          <h5 className="label-text">gif</h5>
+          <h5 className="label-text">Gif</h5>
         </div>
       )
     } else {
@@ -163,7 +163,7 @@ class Transport extends React.Component {
             onClick={this.toggleModal}
           />          
           <h5 className="label-text">Select</h5>
-          <h5 className="label-text">a gif</h5>
+          <h5 className="label-text">Gif</h5>
         </div>
       )
     }

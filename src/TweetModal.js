@@ -143,6 +143,8 @@ class TweetModal extends React.Component {
   toggleModal() {
     let tweetModal = document.getElementById('tweet-modal');
     tweetModal.classList.toggle('visible');
+    let video = document.getElementById('modal-video');
+    video.src = "";
   }
 
   tweetVideo() {
@@ -166,8 +168,8 @@ class TweetModal extends React.Component {
         <button className="close-modal-button" onClick={this.toggleModal}>X</button>
         <h1 className="modal-title">Send it!</h1>
         <div className="tweet-content-div">
-          <video id="modal-video" className="video" autoPlay loop>
-            <source src={this.state.url ? this.state.url : ""} type="video/webm" controls/>
+          <video id="modal-video" className="video" controls>
+            <source src={this.state.url ? this.state.url : ""} type="video/webm"/>
           </video>
           <div className="text-input-div">
             <form className="tweet-form" >
