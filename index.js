@@ -5,6 +5,7 @@ const passport = require('passport');
 const session = require('express-session');
 const cors = require('cors');
 const socketio = require('socket.io');
+const Filesaver = require('file-saver');
 const { Strategy: TwitterStrategy } = require('passport-twitter');
 const formidableMiddleware = require('express-formidable');
 const path = require('path');
@@ -130,6 +131,25 @@ app.post('/video', formidable, (req, res) => {
     }); 
   }
 
+  // ffmpeg(url)
+  //   .toFormat('mp4')
+  //   .on('progress', function (progress) {
+  //     console.log('Processing: ' + progress.percent + '% done');
+  //   })
+  //   .on('end', function (err) {
+  //     console.log('done!');
+  //     setTimeout(() => _twitterVideoPub(myTweetObj, () => console.log("resolved")), 2000);
+  //   })
+  //   .on('error', function (err) {
+  //     console.log('an error happened: ' + err.message);
+  //   })
+  //   .save('beat.mp4');
+  _twitterVideoPub(myTweetObj, () => console.log("resolved"));
+});
+
+app.post('/save', formidable, (req, res) => {
+  const blob = req.files.blob;
+  let url = blob.path;
   ffmpeg(url)
     .toFormat('mp4')
     .on('progress', function (progress) {
@@ -137,12 +157,21 @@ app.post('/video', formidable, (req, res) => {
     })
     .on('end', function (err) {
       console.log('done!');
-      setTimeout(() => _twitterVideoPub(myTweetObj, () => console.log("resolved")), 2000);
+      // setTimeout(() => {
+      //   const PATH = path.join(__dirname, `beat.mp4`);
+      //   Filesaver.saveAs(PATH);
+      // }, 500);
     })
     .on('error', function (err) {
       console.log('an error happened: ' + err.message);
     })
     .save('beat.mp4');
+  res.end();
+});
+
+app.get('/download', formidable, (req, res) => {
+  const PATH = path.join(__dirname, `beat.mp4`);
+  res.download(PATH, 'beat.mp4');
 });
 
 

@@ -3,6 +3,8 @@ import Grid from './Grid';
 import Transport from './Transport';
 import TweetModal from './TweetModal';
 
+import Axios from 'axios';
+
 import defaultSamples from './resources/samples/DefaultSamples';
 import boutiqueSamples from './resources/samples/Boutique 78/BoutiqueSamples';
 import electroSamples from './resources/samples/Electro/ElectroSamples';
@@ -11,7 +13,7 @@ import streetSamples from './resources/samples/Street/StreetSamples';
 
 import './sequencer.css';
 
-
+const API_URL = process.env.NODE_ENV === 'production' ? '' : 'http://127.0.0.1:5000';
 
 const kits = {
   "Default": defaultSamples,
@@ -38,6 +40,7 @@ class Sequencer extends React.Component {
     this.popup = null;
 
     this.state = {
+      video: null,
       blob: null,
       disabled: '',
       playing: false,
@@ -211,7 +214,20 @@ class Sequencer extends React.Component {
         this.setState({
           blob
         });
-        
+
+        let data = new FormData();
+        data.set('blob', blob);
+        let requestUrl = API_URL + '/save';
+
+        Axios.post(requestUrl, data).then(() => {
+          this.setState({
+            video: true
+          });
+        }
+        ).catch(function (error) {
+          throw (error);
+        });
+
         let tweetModal = document.getElementById('tweet-modal');
         tweetModal.classList.toggle('visible');
       }

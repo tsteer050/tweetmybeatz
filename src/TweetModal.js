@@ -60,6 +60,10 @@ class TweetModal extends React.Component {
     this.setState({ user: {} });
   }
 
+  downloadVideo() {
+    window.open("https://www.tweetmybeatz.com/download");
+  }
+
   handleInputSubmit(e) {
     e.preventDefault();
     this.tweetVideo();
@@ -95,7 +99,7 @@ class TweetModal extends React.Component {
     return (
       <div className="label-div">
         <i className="fas fa-file-download transport-button"
-          alt="Download" />
+          alt="Download" onClick={(e) => this.downloadVideo()}/>
         <h5 className="label-text">Download</h5>
         <h5 className="label-text">Video</h5>
       </div>
