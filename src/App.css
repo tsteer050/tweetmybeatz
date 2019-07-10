@@ -7,6 +7,12 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
+}
+
+.splash-title {
+  position: relative;
+  bottom: 50px;
 }
 
 .App-logo {
