@@ -5,7 +5,6 @@ const passport = require('passport');
 const session = require('express-session');
 const cors = require('cors');
 const socketio = require('socket.io');
-const Filesaver = require('file-saver');
 const { Strategy: TwitterStrategy } = require('passport-twitter');
 const formidableMiddleware = require('express-formidable');
 const path = require('path');
@@ -79,12 +78,10 @@ app.get('/twitter/callback', twitterAuth, (req, res) => {
 
 app.post('/video', formidable, (req, res) => {
 
-  const blob = req.files.blob;
   const oauthToken = req.fields.oauth_token;
   const oauthTokenSecret = req.fields.oauth_token_secret;
   const handle = req.fields.handle;
   const tweetText = req.fields.text;
-  let url = blob.path;
 
   const myTweetObj = {
     content: tweetText,
@@ -131,19 +128,6 @@ app.post('/video', formidable, (req, res) => {
     }); 
   }
 
-  // ffmpeg(url)
-  //   .toFormat('mp4')
-  //   .on('progress', function (progress) {
-  //     console.log('Processing: ' + progress.percent + '% done');
-  //   })
-  //   .on('end', function (err) {
-  //     console.log('done!');
-  //     setTimeout(() => _twitterVideoPub(myTweetObj, () => console.log("resolved")), 2000);
-  //   })
-  //   .on('error', function (err) {
-  //     console.log('an error happened: ' + err.message);
-  //   })
-  //   .save('beat.mp4');
   _twitterVideoPub(myTweetObj, () => console.log("resolved"));
 });
 
@@ -157,10 +141,6 @@ app.post('/save', formidable, (req, res) => {
     })
     .on('end', function (err) {
       console.log('done!');
-      // setTimeout(() => {
-      //   const PATH = path.join(__dirname, `beat.mp4`);
-      //   Filesaver.saveAs(PATH);
-      // }, 500);
     })
     .on('error', function (err) {
       console.log('an error happened: ' + err.message);

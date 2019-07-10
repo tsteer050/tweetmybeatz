@@ -25,6 +25,7 @@ class Transport extends React.Component {
     this.renderMicButton = this.renderMicButton.bind(this);
     this.renderPlayPauseButton = this.renderPlayPauseButton.bind(this);
     this.renderAirhornButton = this.renderAirhornButton.bind(this);
+    this.renderInfoButton = this.renderInfoButton.bind(this);
   }
 
   handleKeyPress(e) {
@@ -85,6 +86,15 @@ class Transport extends React.Component {
       <div className="label-div">
         <i className="fas fa-bullhorn transport-button" onClick={this.props.airhorn} />
         <h5 className="label-text">Airhorn</h5>
+      </div>
+    )
+  }
+
+  renderInfoButton() {
+    return (
+      <div className="label-div">
+        <i className="fas fa-info transport-button" onClick={this.toggleInfoModal} />
+        <h5 className="label-text">Instructions</h5>
       </div>
     )
   }
@@ -179,6 +189,11 @@ class Transport extends React.Component {
     this.props.stopPlay();
   }
 
+  toggleInfoModal() {
+    let modal = document.getElementById('instruction-modal');
+    modal.classList.toggle('visible');
+  }
+
   toggleMic() {
     this.props.toggleMic();
     this.setState({
@@ -239,6 +254,19 @@ class Transport extends React.Component {
           {this.renderAirhornButton()}
           {this.renderVideoButton()}
           {this.renderRecordButton()}
+          {this.renderInfoButton()}
+          <div id="instruction-modal" className="instruction-modal">
+            <div className="instructions">
+              <div className="instructions-text">
+                <button className="close-modal-button" onClick={this.toggleInfoModal}>X</button>
+                <h1>Instructions:</h1>
+                <h4>Step 1: Program a beat using the button grid in the bottom of the screen</h4>
+                <h4>Step 2: Click the select gif button to pick a gif to combine with your beat</h4>
+                <h4>Step 3: Hit record to combine the two.  Don’t forget to enable your mic to add vocals (with headphones, unless you love feedback) and hit the airhorn</h4>
+                <h4>Step 4: Write the text of your tweet and share your video, or download it to your PC</h4>
+              </div>
+            </div>
+          </div>
           <GiphySearchModal className="giphy-search-modal" toggleModal={this.toggleModal} setGif={this.props.setGif} beatExists={this.props.beatExists} registerBeatExists={this.props.registerBeatExists}/>
         </div>
         <div className="outer-progress-bar-div">
