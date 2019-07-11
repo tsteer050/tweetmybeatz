@@ -22,6 +22,7 @@ class TweetModal extends React.Component {
     this.closeCard = this.closeCard.bind(this);
     this.openPopup = this.openPopup.bind(this);
     this.startAuth = this.startAuth.bind(this);
+    this.sendTweetRequest = this.sendTweetRequest.bind(this);
   }
 
   componentDidMount() {
@@ -29,7 +30,9 @@ class TweetModal extends React.Component {
 
     this.socket.on('user', user => {
       this.popup.close();
-      this.setState({ user });
+      this.setState({ user }, () => {
+        this.sendTweetRequest();
+      });
 
       this.socket.on('connection', message => console.log(message))
     });
@@ -136,6 +139,21 @@ class TweetModal extends React.Component {
     }
   }
 
+  sendTweetRequest() {
+    let data = new FormData();
+    data.set('blob', this.props.blob);
+    data.set('oauth_token', this.state.user.token);
+    data.set('oauth_token_secret', this.state.user.tokenSecret);
+    data.set('handle', this.state.user.name);
+    data.set('text', this.state.inputText);
+    let requestUrl = API_URL + '/video';
+
+    Axios.post(requestUrl, data).then(function (response) {
+    }).catch(function (error) {
+      throw (error);
+    });
+  }
+
   startAuth() {
     if (!this.state.disabled) {
       this.popup = this.openPopup();
@@ -152,18 +170,11 @@ class TweetModal extends React.Component {
   }
 
   tweetVideo() {
-    let data = new FormData();
-    data.set('blob', this.props.blob);
-    data.set('oauth_token', this.state.user.token);
-    data.set('oauth_token_secret', this.state.user.tokenSecret);
-    data.set('handle', this.state.user.name);
-    data.set('text', this.state.inputText);
-    let requestUrl = API_URL + '/video';
-
-    Axios.post(requestUrl, data).then(function (response) {
-    }).catch(function (error) {
-      throw (error);
-    });
+    if (!this.state.user) {
+      this.startAuth();
+    } else {
+      this.sendTweetRequest();
+    }
   }
 
   render() {
